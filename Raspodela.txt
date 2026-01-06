@@ -1,0 +1,4 @@
+Tamara - update, delete
+Katarina - create, read
+Julijana - JWT
+Filip - email
