@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from Services.UserService import UserService
-from DTO.UserDTO import UserCreateDTO, UserResponseDTO
+from DTO.UserDTO import UserCreateDTO, UserResponseDTO, UserUpdateDTO
 
 user_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
@@ -47,3 +47,34 @@ def get_users():
             "role": u.userRole.name
         } for u in users
     ])
+
+@user_bp.route("/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    try:
+        success = UserService.delete_user(user_id)
+
+        if success:
+            return jsonify({"message": "User successfully deleted"}), 200
+        else:
+            return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": "An error occurred during deletion"}), 500
+    
+
+@user_bp.route("/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    try:
+        dto_update = UserUpdateDTO(request.json)
+
+        updated_user = UserService.update_user(user_id, dto_update.to_dict())
+
+        if not updated_user:
+            return jsonify({"error": "User not found"}), 404
+        return jsonify(UserResponseDTO(updated_user).to_dict()), 200
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
+
+
