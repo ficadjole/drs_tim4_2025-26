@@ -7,7 +7,6 @@ user_bp = Blueprint("users", __name__, url_prefix="/api/users")
 @user_bp.route("/register", methods=["POST"])
 def register_user():
     try:
-        print("kaca")
         dto = UserCreateDTO(request.json)
 
         if not dto.is_valid():

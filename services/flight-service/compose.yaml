@@ -1,0 +1,29 @@
+services:
+  db2:
+    image: mysql:8.4
+    env_file:
+      - .env #ucitava podatke iz env fajla
+    ports:
+      - "5556:3306" #prvi port je nas port na kompu: drugi je onaj na kome radi u konteneru
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - mysql_network
+
+volumes:
+      mysql_data:
+        driver: local
+
+networks:
+  mysql_network:
+    driver: bridge
+#  server:
+#    build: ./server
+#    ports:
+#      - "5000:5000"
+#    environment:
+#      - DATABASE_URL=mysql://root:1234@db1:5555/users_db
+#      - JTW_SECRET_KEY=OVOJEJWTTOKENIONJEDOBAR
+#    depends_on:
+#      - db1
