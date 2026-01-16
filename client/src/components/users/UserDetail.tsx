@@ -16,19 +16,44 @@ export default function UserDetails() {
     }
   }, [userId]);
 
-  if (!user) return <p>Učitavanje profila...</p>;
-
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center text-gray-300">
+        Profile loading...
+      </div>
+    );
+  }
   return (
-    <div style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px", maxWidth: "400px" }}>
-      <h2>Moj Profil</h2>
-      <p><strong>Ime:</strong> {user.firstName}</p>
-      <p><strong>Prezime:</strong> {user.lastName}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Država:</strong> {user.state || "Nije uneseno"}</p>
-      
-      <button onClick={() => navigate(`/edit-user/${user.id}`)} style={{ marginTop: "10px" }}>
-        Izmeni podatke
-      </button>
+    <div className="min-h-screen bg-gray-900 px-6 py-12 text-white">
+      <div className="mx-auto max-w-md rounded-lg border border-white/10 bg-white/5 p-6">
+        <h2 className="mb-6 text-2xl font-bold">My Profile</h2>
+        <div>
+          <p>
+            <span className="text-gray-400">Name:</span>{" "}
+            <span className="font-medium">{user.firstName}</span>
+          </p>
+
+          <p>
+            <span className="text-gray-400">Surname:</span>{" "}
+            <span className="font-medium">{user.lastName}</span>
+          </p>
+
+          <p>
+            <span className="text-gray-400">Email:</span>{" "}
+            <span className="font-medium">{user.email}</span>
+          </p>
+
+          <p>
+            <span className="text-gray-400">State:</span>{" "}
+            <span className="font-medium">{user.state}</span>
+          </p>
+        </div>
+        
+        <button onClick={() => navigate(`/edit-user/${user.id}`)} 
+          className="mt-6 w-full rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold hover:bg-indigo-400">
+          Change
+        </button>
+      </div>
     </div>
   );
 }

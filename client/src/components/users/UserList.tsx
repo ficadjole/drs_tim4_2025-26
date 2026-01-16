@@ -14,7 +14,7 @@ export default function UsersList() {
       const data = await userApi.getAllUsers();
       setUsers(data);
     } catch (error) {
-      console.error("Greška pri učitavanju:", error);
+      console.error("Error while loading: ", error);
     }
   };
 
@@ -24,58 +24,63 @@ export default function UsersList() {
 
   const handleRoleChange = async (userId: number, newRoleValue: number) => {
     try {
-
     const roleToUpdate = newRoleValue as UserRoleType;
-
     await userApi.updateUser(userId, { userRole: roleToUpdate });
     
-    alert("Uloga uspešno promenjena");
+    alert("Role successfully changed.");
     loadUsers(); 
   } catch (error) {
-    alert("Greška pri promeni uloge na serveru");
+    alert("Error while changing the role on server.");
   }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Lista korisnika (Admin panel)</h2>
-      <table border={1} style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ background: "#eee" }}>
-            <th>Ime i prezime</th>
-            <th>Email</th>
-            <th>Uloga</th>
-            <th>Akcije</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td>{u.firstName} {u.lastName}</td>
-              <td>{u.email}</td>
-              <td>
-                <select 
-                  value={u.userRole} 
-                  onChange={(e) => handleRoleChange(u.id, Number(e.target.value))}
-                >
-                  <option value={UserRole.ADMINISTRATOR}>Administrator</option>
-                  <option value={UserRole.MANAGER}>Menadžer</option>
-                  <option value={UserRole.USER}>Korisnik</option>
-                </select>
-              </td>
-              <td>
-                <button onClick={() => navigate(`/edit-user/${u.id}`)}>Izmeni</button>
-                <button 
-                  onClick={() => u.id && userApi.deleteUser(u.id).then(loadUsers)} 
-                  style={{ color: 'red', marginLeft: '10px' }}
-                >
-                  Obriši
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="min-h-screen bg-gray-900 px-6 py-12 text-white">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="mb-8 text-2xl font-bold tracking-tight">User List (Admin panel)</h2>
+        <div className="overflow-x-auto rounded-lg border border-white/10">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-white/5">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold">Name and Surname</th>
+                <th className="px-4 py-3 text-left font-semibold">Email</th>
+                <th className="px-4 py-3 text-left font-semibold">Role</th>
+                <th className="px-4 py-3 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-white/10">
+              {users.map((u) => (
+                <tr key={u.id} className="hover:bg-white/5">
+                  <td className="px-4 py-3">{u.firstName} {u.lastName}</td>
+                  <td className="px-4 py-3 text-gray-300">{u.email}</td>
+                  <td className="px-4 py-3">
+                    <select 
+                      value={u.userRole} 
+                      onChange={(e) => handleRoleChange(u.id, Number(e.target.value))}
+                      className="rounded-md bg-white/5 px-3 py-1 text-white outline outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500"
+                    >
+                      <option value={UserRole.ADMINISTRATOR}>Administrator</option>
+                      <option value={UserRole.MANAGER}>Manager</option>
+                      <option value={UserRole.USER}>User</option>
+                    </select>
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <button onClick={() => navigate(`/edit-user/${u.id}`)} className="rounded-md bg-indigo-500 px-3 py-1 text-sm font-semibold hover:bg-indigo-400">Change</button>
+                    <button 
+                      onClick={() => u.id && userApi.deleteUser(u.id).then(loadUsers)} 
+                      className="rounded-md bg-indigo-500/80 px-3 py-1 text-sm font-semibold hover:bg-indigo-500"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

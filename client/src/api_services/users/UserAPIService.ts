@@ -10,9 +10,9 @@ export const userApi = {
   },
 
   async getUserById(id: number): Promise<User | undefined> {
-    const token = localStorage.getItem("token");
+    //const token = localStorage.getItem("token");
     const users = await axios.get<User>(`${API_URL}/${id}`, {
-      headers: {Authorization: `Bearer ${token}`}
+      //headers: {Authorization: `Bearer ${token}`}
     });
     return users.data;
   },

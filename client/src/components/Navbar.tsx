@@ -3,7 +3,7 @@ import { UserRole } from "../enums/UserRoles";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const uloga = Number(localStorage.getItem("userRole"));
+  const role = Number(localStorage.getItem("userRole"));
   const userId = localStorage.getItem("userId");
 
   const handleLogout = () => {
@@ -15,28 +15,21 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{ 
-      display: "flex", 
-      justifyContent: "space-between", 
-      padding: "10px 20px", 
-      background: "#333", 
-      color: "white",
-      marginBottom: "20px" 
-    }}>
-      <div>
-        <span style={{ marginRight: "20px", fontWeight: "bold" }}>Moja Aplikacija</span>
-        {uloga === UserRole.ADMINISTRATOR ? (
-          <button onClick={() => navigate("/users")}>Lista korisnika</button>
+    <nav className="flex items-center justify-between bg-gray-900 px-6 py-4 text-white border-b border-white/10">
+      <div className="flex items-center gap-6">
+        <span className="cursor-pointer text-lg font-bold tracking-tight text-indigo-400 hover:text-indigo-300">My Application</span>
+        {role === UserRole.ADMINISTRATOR ? (
+          <button onClick={() => navigate("/users")} className="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">User List</button>
         ) : (
-          <button onClick={() => navigate(`/edit-user/${userId}`)}>Moj Profil</button>
+          <button onClick={() => navigate(`/edit-user/${userId}`)} className="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">My Profile</button>
         )}
       </div>
 
       <button 
         onClick={handleLogout} 
-        style={{ backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "5px 15px", cursor: "pointer" }}
+        className="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10"
       >
-        Odjavi se (Logout)
+        Logout
       </button>
     </nav>
   );
