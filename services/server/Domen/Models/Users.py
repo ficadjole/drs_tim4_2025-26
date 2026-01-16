@@ -22,8 +22,10 @@ class Users(db.Model):
     accountBalance = db.Column(db.Float,nullable=False,default=0.0)
     userRole = db.Column(db.Enum(UserRoles),nullable=False,default=UserRoles.USER)
 
+    userImageUrl = db.Column(db.String(512),default=None)
+
     failedAttempts = db.Column(db.Integer, default=0)
     blockedUntil = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
-        return f"User('{self.firstName}','{self.lastName}','{self.email}')"
+        return f"User('{self.firstName}','{self.lastName}','{self.email}','{self.userRole}')"

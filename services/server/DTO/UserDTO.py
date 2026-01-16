@@ -43,6 +43,7 @@ class UserUpdateDTO:
         self.streetName = data.get("streetName")
         self.streetNumber = data.get("streetNumber")
         self.accountBalance = data.get("accountBalance", 0.0)
+        self.userRole = data.get("userRole")
 
 
     def to_dict(self):
