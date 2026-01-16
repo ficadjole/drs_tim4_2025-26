@@ -10,10 +10,7 @@ export const userApi = {
   },
 
   async getUserById(id: number): Promise<User | undefined> {
-    //const token = localStorage.getItem("token");
-    const users = await axios.get<User>(`${API_URL}/${id}`, {
-      //headers: {Authorization: `Bearer ${token}`}
-    });
+    const users = await axios.get<User>(`${API_URL}/${id}`);
     return users.data;
   },
 

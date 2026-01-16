@@ -11,11 +11,11 @@ export default function UserDetails() {
   useEffect(() => {
     if (userId) {
       userApi.getUserById(Number(userId)).then((data) => {
-      setUser(data ?? null); 
+      setUser(data ?? null);
     });
     }
   }, [userId]);
-
+    console.log(user)
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center text-gray-300">

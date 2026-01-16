@@ -50,6 +50,18 @@ def get_users():
         } for u in users
     ])
 
+@user_bp.route("/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    try:
+        user = UserService.get_user_by_id(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify(UserResponseDTO(user).to_dict()), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     try:
@@ -61,7 +73,6 @@ def delete_user(user_id):
             return jsonify({"error": "User not found"}), 404
     except Exception as e:
         return jsonify({"error": "An error occurred during deletion"}), 500
-    
 
 @user_bp.route("/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
