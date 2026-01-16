@@ -28,7 +28,7 @@ export const authApi: IAuthAPIService = {
       }
   },
 
-  async registracija(email:string,lozinka:string,ime:string,prezime:string,datumRodjenja:string,pol:string,drzava:string,ulica:string,broj:number):Promise<AuthResponse>{
+  async registracija(email:string,lozinka:string,ime:string,prezime:string,datumRodjenja:string,pol:string,drzava:string,ulica:string,broj:string):Promise<AuthResponse>{
 
     try {
       const res = await axios.post<AuthResponse>(`${API_URL}users/register`, {

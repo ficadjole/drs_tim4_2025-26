@@ -5,5 +5,5 @@ import type { AuthResponse } from "../../types/auth/AuthResponse";
  */
 export interface IAuthAPIService {
   prijava(email: string, lozinka: string): Promise<AuthResponse>;
-  registracija(email:string,lozinka:string,ime:string,prezime:string,datumRodjenja:string,pol:string,drzava:string,ulica:string,broj:number):Promise<AuthResponse>;
+  registracija(email:string,lozinka:string,ime:string,prezime:string,datumRodjenja:string,pol:string,drzava:string,ulica:string,broj:string):Promise<AuthResponse>;
 }
