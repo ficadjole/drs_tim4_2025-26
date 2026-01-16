@@ -6,7 +6,7 @@ from Domen.Enums.UserRoles import UserRoles
 
 user_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
-@user_bp.route("/register", methods=["POST"])
+@user_bp.route("/create", methods=["POST"])
 def register_user():
     try:
         dto = UserCreateDTO(request.json)

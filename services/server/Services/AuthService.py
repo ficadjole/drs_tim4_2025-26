@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 from Domen.Models.Users import Users
 from Extensions.Bcrypt import bcrypt
 from Database.InitializationDataBase import db
+from Domen.Enums import Genders
 
 class AuthService:
     @staticmethod
@@ -33,6 +34,36 @@ class AuthService:
             identity=user.id,
             additional_claims={
                 "role":user.userRole.name
+            }
+        )
+
+        return token
+    
+    @staticmethod
+    def register(dto):
+        existing_user = Users.query.filter_by(email=dto.email).first()
+        if existing_user:
+            raise ValueError("Email already exists")
+        
+        user = Users(
+            email=dto.email,
+            password_hash=bcrypt.generate_password_hash(dto.password).decode("utf-8"),
+            firstName=dto.firstName,
+            lastName=dto.lastName,
+            dateOfBirth=datetime.fromisoformat(dto.dateOfBirth),
+            gender=dto.gender,
+            state=dto.state,
+            streetName=dto.streetName,
+            streetNumber=dto.streetNumber
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        token = create_access_token(
+            identity=user.id,
+            additional_claims={
+                "role": user.userRole.name
             }
         )
 

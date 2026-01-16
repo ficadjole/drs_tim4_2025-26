@@ -1,4 +1,4 @@
-import enum
+import enum 
 
 class Genders(enum.Enum):
     MALE = 1

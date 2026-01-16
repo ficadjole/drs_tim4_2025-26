@@ -10,8 +10,11 @@ export const userApi = {
   },
 
   async getUserById(id: number): Promise<User | undefined> {
-    const users = await this.getAllUsers();
-    return users.find((user) => user.id === id);
+    const token = localStorage.getItem("token");
+    const users = await axios.get<User>(`${API_URL}/${id}`, {
+      headers: {Authorization: `Bearer ${token}`}
+    });
+    return users.data;
   },
 
   async updateUser(id: number, userData: any): Promise<any> {

@@ -35,7 +35,7 @@ export default function AutentifikacionaForma({
 
         try {
 
-            const odgovor = await authApi.registracija(registerPodaci.email, registerPodaci.lozinka, registerPodaci.firstName, registerPodaci.lastName, registerPodaci.dateOfBirth, registerPodaci.gender, registerPodaci.state, registerPodaci.streetName, registerPodaci.streetNumber);
+            const odgovor = await authApi.register(registerPodaci.email, registerPodaci.lozinka, registerPodaci.firstName, registerPodaci.lastName, registerPodaci.dateOfBirth, registerPodaci.gender, registerPodaci.state, registerPodaci.streetName, registerPodaci.streetNumber);
 
             if (odgovor.accessToken) {
                 localStorage.setItem("token", odgovor.accessToken);
@@ -63,7 +63,7 @@ export default function AutentifikacionaForma({
     }else{
 
     try {
-      const odgovor = await authApi.prijava(email, lozinka);
+      const odgovor = await authApi.login(email, lozinka);
 
       if (odgovor.accessToken) {
         localStorage.setItem("token", odgovor.accessToken);

@@ -5,11 +5,11 @@ import axios from "axios";
 const API_URL: string = import.meta.env.VITE_GATEWAY_URL;
 
 export const authApi: IAuthAPIService = {
-  async prijava(korisnickoIme: string, lozinka: string): Promise<AuthResponse> {
+  async login(email: string, password: string): Promise<AuthResponse> {
     try {
       const res = await axios.post<AuthResponse>(`${API_URL}auth/login`, {
-        email: korisnickoIme,
-        password: lozinka,
+        email: email,
+        password: password,
       });
       
       const token = res.data.accessToken;
@@ -20,7 +20,7 @@ export const authApi: IAuthAPIService = {
 
       return res.data;
     } catch (error) {
-      let message = "Greška prilikom prijave.";
+      let message = "Error while logging in.";
       if (axios.isAxiosError(error)) {
         message = error.response?.data?.error || message; 
       }
@@ -28,19 +28,19 @@ export const authApi: IAuthAPIService = {
       }
   },
 
-  async registracija(email:string,lozinka:string,ime:string,prezime:string,datumRodjenja:string,pol:string,drzava:string,ulica:string,broj:string):Promise<AuthResponse>{
+  async register(email:string, password:string, name:string, lastName:string, dateOfBirth:string, gender:string, state:string, streetName:string, streetNumber:string):Promise<AuthResponse>{
 
     try {
-      const res = await axios.post<AuthResponse>(`${API_URL}users/register`, {
+      const res = await axios.post<AuthResponse>(`${API_URL}auth/register`, {
         email: email,
-        password: lozinka,
-        firstName:ime,
-        lastName:prezime,
-        dateOfBirth:datumRodjenja,
-        gender:pol,
-        state:drzava,
-        streetName:ulica,
-        streetNumber:broj,
+        password: password,
+        firstName: name,
+        lastName: lastName,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        state: state,
+        streetName: streetName,
+        streetNumber: streetNumber,
       });
 
       const token = res.data.accessToken;
@@ -51,7 +51,7 @@ export const authApi: IAuthAPIService = {
 
       return res.data;
     } catch (error) {
-      let message = "Greška prilikom registracije.";
+      let message = "Error while registering.";
       if (axios.isAxiosError(error)) {
         message = error.response?.data?.error || message;
       }
