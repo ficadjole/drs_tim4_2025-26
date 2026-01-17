@@ -26,7 +26,7 @@ class UserResponseDTO:
         self.email = user.email
         self.firstName = user.firstName
         self.lastName = user.lastName
-        self.role = user.userRole.name
+        self.role = user.userRole.value
 
     def to_dict(self):
         return self.__dict__

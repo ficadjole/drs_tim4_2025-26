@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { userApi } from "../../api_services/users/UserAPIService";
 import type { User } from "../../models/users/UserDto";
-import { UserRole } from "../../enums/UserRoles";
+import { UserRole, type UserRoleType } from "../../enums/UserRoles";
 import {format} from "date-fns";
 
 export default function EditUserForm() {
@@ -10,7 +10,7 @@ export default function EditUserForm() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
-  const myRole = Number(localStorage.getItem("userRole"));
+  const myRole = localStorage.getItem("userRole") as UserRoleType | null;
 
   useEffect(() => {
     if (id) {
@@ -193,11 +193,11 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   <div>
                     <label className="mb-1 block text-sm text-gray-300">User role</label>
                     <select
-                      value={user.role}
+                      value={user.userRole}
                       onChange={(e) =>
                         setUser({
                           ...user,
-                          role: e.target.value as "USER" | "MANAGER" | "ADMINISTRATOR",
+                          userRole: e.target.value as "USER" | "MANAGER" | "ADMINISTRATOR",
                         })
                       }
                       className="w-full rounded-lg bg-gray-900/80 px-4 py-2.5 text-white

@@ -52,7 +52,7 @@ export default function UsersList() {
                   <td className="px-4 py-3 text-gray-300">{u.email}</td>
                   <td className="px-4 py-3">
                     <select
-                      value={u.role}
+                      value={u.userRole}
                       onChange={(e) =>
                         handleRoleChange(u.id, e.target.value)
                       }
