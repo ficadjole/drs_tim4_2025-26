@@ -89,7 +89,7 @@ export default function UserDetails() {
 
           <p>
             <span className="text-gray-400">User role:</span>{" "}
-            <span className="font-medium">{user.role}</span>
+            <span className="font-medium">{user.userRole}</span>
           </p>
 
 
