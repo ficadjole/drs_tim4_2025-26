@@ -48,3 +48,18 @@ class UserUpdateDTO:
 
     def to_dict(self):
         return {k: v for k, v in self.__dict__.items() if v is not None}
+
+class UserProfileDTO:
+    def __init__(self, user):
+        self.email = user.email
+        self.firstName = user.firstName
+        self.lastName = user.lastName
+        self.dateOfBirth = user.dateOfBirth
+        self.gender = user.gender.name
+        self.state = user.state
+        self.streetName = user.streetName
+        self.streetNumber = user.streetNumber
+        self.userImageUrl = user.userImageUrl
+        self.userRole = user.userRole.name
+    def to_dict(self):
+        return self.__dict__

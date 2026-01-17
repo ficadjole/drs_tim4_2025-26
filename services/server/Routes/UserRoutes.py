@@ -1,8 +1,9 @@
 import requests
 from flask import Blueprint, request, jsonify
 from Services.UserService import UserService
-from DTO.UserDTO import UserCreateDTO, UserResponseDTO, UserUpdateDTO
+from DTO.UserDTO import UserCreateDTO, UserResponseDTO, UserUpdateDTO, UserProfileDTO
 from Domen.Enums.UserRoles import UserRoles
+
 
 user_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
@@ -54,11 +55,11 @@ def get_users():
 def get_user(user_id):
     try:
         user = UserService.get_user_by_id(user_id)
-
+        print(user)
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        return jsonify(UserResponseDTO(user).to_dict()), 200
+        return jsonify(UserProfileDTO(user).to_dict()), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 

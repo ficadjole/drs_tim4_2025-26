@@ -30,7 +30,9 @@ class UserService:
     
     @staticmethod
     def get_user_by_id(user_id):
-        return Users.query.get(user_id)
+        user = Users.query.get(user_id)
+        return user
+
 
     @staticmethod
     def get_user_by_email(email):

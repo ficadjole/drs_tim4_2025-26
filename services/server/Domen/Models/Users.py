@@ -28,4 +28,4 @@ class Users(db.Model):
     blockedUntil = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
-        return f"User('{self.firstName}','{self.lastName}','{self.email}','{self.userRole}','{self.state}')"
+        return f"User('{self.email}','{self.firstName}','{self.lastName}','{self.dateOfBirth}','{self.gender}','{self.state}','{self.streetName}','{self.streetNumber}','{self.userImageUrl}','{self.userRole}')"
