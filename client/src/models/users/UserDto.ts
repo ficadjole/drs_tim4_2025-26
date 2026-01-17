@@ -3,7 +3,7 @@ import type { UserRoleType } from "../../enums/UserRoles";
 export interface User {
   id: number;
   email: string;
-  password?: string; 
+  password?: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string; 
@@ -13,4 +13,5 @@ export interface User {
   streetNumber: string;
   accountBalance: number;
   userRole: UserRoleType;
+  userImageUrl: string;
 }

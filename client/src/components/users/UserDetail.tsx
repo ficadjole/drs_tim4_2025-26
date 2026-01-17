@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../../api_services/users/UserAPIService";
 import type { User } from "../../models/users/UserDto";
-import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { format } from "date-fns";
 
 export default function UserDetails() {
   const [user, setUser] = useState<User | null>(null);
-  const [image, setImage] = useState<Image | null>(null);
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
@@ -26,25 +24,6 @@ export default function UserDetails() {
       </div>
     );
   }
-
-const handleImageUpload = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  // Limit to ~50KB (adjust as needed)
-  const maxSizeKB = 50;
-  if (file.size > maxSizeKB * 1024) {
-    alert(`File too big. Max size: ${maxSizeKB}KB`);
-    return;
-  }
-
-  // Generate preview
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    setImage(reader.result); // data URL for preview
-  };
-  reader.readAsDataURL(file);
-};
 
   return (
     <div className="min-h-screen bg-gray-900 px-6 py-12 text-white">
