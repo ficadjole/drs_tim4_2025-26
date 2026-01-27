@@ -1,4 +1,23 @@
-Tamara - update, delete
-Katarina - create, read
-Julijana - JWT
-Filip - email
+CRUD operacije letovi - filip
+Javiti mejlom korisinicima ako im je let otkazan
+
+
+Prikaz novokreiranog leta putem web socketa i prihavtanje ili odbijanje leta. Ako otakze se let
+potrebno je vratiti poruku zbog cega - katarina moze da vidi
+
+
+Pribavljanje letova po statusu (po danasnjem danu) - julijana
+Proveravati vreme polaska leta u odnosu na danasnji dan (nije poceo, traje, zavrsen\otkazan)
+
+
+Implementirati kupovinu karte - julijana
+
+
+
+Tabove generisati  u vidu PDF-a i poslati adminu na mejl - poziv mailing servisa - tamara
+
+
+
+"Gateway" za komunkaciju klijenta i let servisa na Serveru - ovo cemo uraditi rekle pametnije glave od mene (filip)
+
+Do kraja nedelje probati zavrsiti sta smo napisali
