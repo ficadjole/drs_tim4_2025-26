@@ -1,6 +1,7 @@
 from flask import Flask
 from Database.InitializationDataBase import db
 from Domen.Config.config import  Config
+from Routes.AirCompanyRoutes import companies_bp
 from Domen.Models.AirCompany import AirCompanies
 from Domen.Models.BoughtTickets import BoughtTickets
 from Domen.Models.Flights import  Flights
@@ -8,6 +9,8 @@ from Domen.Models.Flights import  Flights
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
+
+app.register_blueprint(companies_bp)
 
 if __name__ == "__main__":
     with app.app_context():

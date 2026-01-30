@@ -10,6 +10,15 @@ services:
     restart: unless-stopped
     networks:
       - mysql_network
+  redis:
+    image: redis:8.4.0
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    
+    networks:
+      - mysql_network
+
 
 volumes:
       mysql_data:

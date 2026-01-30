@@ -55,7 +55,6 @@ def get_users():
 def get_user(user_id):
     try:
         user = UserService.get_user_by_id(user_id)
-        print(user)
         if not user:
             return jsonify({"error": "User not found"}), 404
 
