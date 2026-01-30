@@ -15,7 +15,6 @@ class AirCompanyService:
         #     return cached_companies
 
         companies = AirCompanies.query.all()
-        print(companies)
         # redis_client.set("airCompanies", companies)
 
         return companies
@@ -85,7 +84,6 @@ class AirCompanyService:
 
     @staticmethod
     def create(name):
-        print(name)
         airCompany = AirCompanies(name=name)
 
         db.session.add(airCompany)

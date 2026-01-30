@@ -21,5 +21,18 @@ class Flights(db.Model):
 
     db.relationship("BoughtTickets",back_populates="flight")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "flightDuration": self.flightDuration,
+            "currentFlightDuration": self.currentFlightDuration,
+            "departureTime": self.departureTime,
+            "departureAirport": self.departureAirport,
+            "arrivalAirport": self.arrivalAirport,
+            "ticketPrice": self.ticketPrice,
+            "createdBy": self.createdBy,
+        }
+
     def __repr__(self):
         return f"User('{self.name}','{self.flightDuration}','{self.ticketPrice}','{self.createdBy}')"
