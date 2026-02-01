@@ -77,6 +77,7 @@ class AirCompanyService:
     def delete(id):
         airCompany = AirCompanies.query.get(id)
         cache_key = f"airCompany:{id}"
+
         if airCompany:
 
             redis_client.delete(cache_key)

@@ -8,8 +8,6 @@ def roles_required(*roles):
         def decorator(*args, **kwargs):
             verify_jwt_in_request()
             claims = get_jwt()
-            print("claims: ", claims)
-            print("roles: ", roles)
             if claims["role"] not in roles:
                 return jsonify({"error": "Access denied"}), 403
 

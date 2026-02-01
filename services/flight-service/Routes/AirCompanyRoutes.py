@@ -55,7 +55,8 @@ def update_company(aircompany_id):
 @companies_bp.route('/<int:aircompany_id>', methods=['DELETE'])
 def delete_company(aircompany_id):
     try:
-        success = AirCompanyService.delete_company(aircompany_id)
+
+        success = AirCompanyService.delete(aircompany_id)
         if success:
             return jsonify({"message": "Air Company successfully deleted"}), 200
         else:
