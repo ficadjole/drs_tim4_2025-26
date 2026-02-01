@@ -2,6 +2,7 @@ from selectors import SelectSelector
 
 from flask import jsonify, Blueprint,request
 from DTO.FlightCreateDTO import FlightCreateDTO
+from DTO.FlightCreateDTO import FlightUpdateDTO
 from Services.FlightsService import FlightsService
 from Services.ReportService import ReportService
 
@@ -82,7 +83,7 @@ def create():
 @flights_bp.route('/update/<int:id>', methods=['PUT'])
 def update(id):
     try:
-        json_data = FlightCreateDTO(request.json)
+        json_data = FlightUpdateDTO(request.json)
 
         flight = FlightsService.update_flight(id, json_data)
 
@@ -119,8 +120,11 @@ def get_flights_by_status(status):
 @flights_bp.route('generate-report', methods=['POST'])
 def generate_report():
     data = request.get_json()
-    tab_name = data.get('tab_name')
+    tab_name = data.get('tabName')
     admin_email = data.get('email')
+
+    if not tab_name or not admin_email:
+        return jsonify({"message": "TabName or Email is missing"}), 400
 
     flights = FlightsService.get_flights_by_status(tab_name.upper())
 

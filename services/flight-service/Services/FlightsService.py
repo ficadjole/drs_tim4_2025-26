@@ -80,16 +80,24 @@ class FlightsService:
         if flight is None:
             return None
 
-        flight.name = data.name
-        flight.airCompanyId = data.airCompanyId
-        flight.flightDuration = data.flightDuration
-        flight.currentFlightDuration = data.currentFlightDuration
-        flight.departureTime = data.departureTime
-        flight.departureAirport = data.departureAirport
-        flight.arrivalAirport = data.arrivalAirport
-        flight.ticketPrice = data.ticketPrice
-        flight.createdBy = data.createdBy
-
+        if hasattr(data, 'name') and data.name is not None:
+            flight.name = data.name
+        if hasattr(data, 'airCompanyId') and data.airCompanyId is not None:
+            flight.airCompanyId = data.airCompanyId
+        if hasattr(data, 'flightDuration') and data.flightDuration is not None:
+            flight.flightDuration = data.flightDuration
+        if hasattr(data, 'currentFlightDuration') and data.currentFlightDuration is not None:
+            flight.currentFlightDuration = data.currentFlightDuration
+        if hasattr(data, 'departureTime') and data.departureTime is not None:
+            flight.departureTime = data.departureTime
+        if hasattr(data, 'departureAirport') and data.departureAirport is not None:
+            flight.departureAirport = data.departureAirport
+        if hasattr(data, 'arrivalAirport') and data.arrivalAirport is not None:
+            flight.arrivalAirport = data.arrivalAirport
+        if hasattr(data, 'ticketPrice') and data.ticketPrice is not None:
+            flight.ticketPrice = data.ticketPrice
+        if hasattr(data, 'createdBy') and data.createdBy is not None:
+            flight.createdBy = data.createdBy
 
         db.session.commit()
         redis_client.delete(cache_key)

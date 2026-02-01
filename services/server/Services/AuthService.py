@@ -33,7 +33,8 @@ class AuthService:
         token = create_access_token(
             identity=str(user.id),
             additional_claims={
-                "role":user.userRole.name
+                "role":user.userRole.name,
+                "email": user.email
             }
         )
 
@@ -63,7 +64,8 @@ class AuthService:
         token = create_access_token(
             identity=user.id,
             additional_claims={
-                "role": user.userRole.name
+                "role": user.userRole.name,
+                "email": user.email #dodala zbog slanja mejla adminu
             }
         )
 
