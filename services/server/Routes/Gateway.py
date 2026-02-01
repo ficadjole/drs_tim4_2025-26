@@ -9,6 +9,7 @@ from Domen.Config.config import Config
 
 gateway_bp = Blueprint("gateway_bp", __name__, url_prefix="/gateway")
 
+# region air_company gateway
 @gateway_bp.route("/air_company/getAll", methods=["GET"])
 def get_all_company():
     try:
@@ -102,3 +103,80 @@ def delete_company(air_company_id):
         return jsonify(response.json()), 200
     except Exception as error:
         return jsonify({"message":f"Server: {error}"}), 500
+
+# endregion
+
+# region bought_tickets
+
+@gateway_bp.route("/tickets/<int:ticket_id>", methods=["GET"])
+@jwt_required()
+def get_ticket(ticket_id):
+    try:
+        response = requests.get(f"{Config.FLIGHT_SERVICE_URL}/tickets/{ticket_id}")
+
+        if response.status_code != 200:
+            return jsonify({"message":f"Server: {response.status_code}"}), 500
+
+        return jsonify(response.json()), 200
+
+    except Exception as error:
+        return jsonify({"message":f"Server: {error}"}), 500
+
+@gateway_bp.route("/tickets/user-tickets/<int:user_id>", methods=["GET"])
+@jwt_required()
+def get_users_tickets(user_id):
+    try:
+        response = requests.get(f"{Config.FLIGHT_SERVICE_URL}/tickets/users-tickets/{user_id}")
+        if response.status_code != 200:
+            return jsonify({"message":f"Server: {response.status_code}"}), 500
+
+        return jsonify(response.json()), 200
+
+    except Exception as error:
+        return jsonify({"message":f"Server: {error}"}), 500
+
+@gateway_bp.route("/tickets/flights-tickets/<int:ticket_id>", methods=["GET"])
+@jwt_required()
+def get_flights_tickets(ticket_id):
+    try:
+        response = requests.get(f"{Config.FLIGHT_SERVICE_URL}/tickets/flights-tickets/{ticket_id}")
+        if response.status_code != 200:
+            return jsonify({"message":f"Server: {response.status_code}"}), 500
+        return jsonify(response.json()), 200
+    except Exception as error:
+        return jsonify({"message":f"Server: {error}"}), 500
+
+@gateway_bp.route("/tickets/create", methods=["POST"])
+@jwt_required()
+def create_ticket():
+    try:
+        data = request.json
+
+        response = requests.post(f'{Config.FLIGHT_SERVICE_URL}/tickets/create',json=data)
+
+        if response.status_code != 201:
+            return jsonify({"message":f"Server: {response.status_code}"}), 500
+
+        return jsonify(response.json()), 201
+    except Exception as error:
+        return jsonify({"message":f"Server: {error}"}), 500
+
+@gateway_bp.route("/tickets/cancel/<int:ticket_id>", methods=["PUT"])
+@jwt_required()
+def cancel_ticket(ticket_id):
+    try:
+
+        response = requests.put(f"{Config.FLIGHT_SERVICE_URL}/tickets/cancel/{ticket_id}")
+
+        if response.status_code == 404:
+            return jsonify({"message":f"Server: {response.text}"}), 404
+
+        if response.status_code != 200:
+            return jsonify({"message":f"Server: {response.status_code}"}), 500
+
+        return jsonify(response.json()), 200
+
+    except Exception as error:
+        return jsonify({"message":f"Server: {error}"}), 500
+
+# endregion
