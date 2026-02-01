@@ -3,6 +3,7 @@ from selectors import SelectSelector
 from flask import jsonify, Blueprint,request
 from DTO.FlightCreateDTO import FlightCreateDTO
 from Services.FlightsService import FlightsService
+from Services.ReportService import ReportService
 
 flights_bp = Blueprint('flights_bp', __name__, url_prefix='/api/flights')
 
@@ -114,3 +115,17 @@ def get_flights_by_status(status):
         return jsonify(flights), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@flights_bp.route('generate-report', methods=['POST'])
+def generate_report():
+    data = request.get_json()
+    tab_name = data.get('tab_name')
+    admin_email = data.get('email')
+
+    flights = FlightsService.get_flights_by_status(tab_name.upper())
+
+    success, message = ReportService.generate_and_send(flights, tab_name, admin_email)
+
+    return jsonify({"message": message}), 202 if success else 400
+
+   

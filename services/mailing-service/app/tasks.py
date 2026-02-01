@@ -2,6 +2,8 @@ import requests
 from flask_mail import Message
 from .extensions import mail, celery
 from .config import Config
+import base64
+
 
 @celery.task
 def send_email(to,subject,body):
@@ -43,3 +45,24 @@ def send_flight_cancelled_email(flightId):
                 ))
 
                 mail.send(msg)
+
+@celery.task(name="email.task.send_report_pdf")
+def send_report_pdf(admin_email, tab_name, pdf_b64):
+
+        
+        msg = Message(
+                subject = f"Flight Report - {tab_name}",
+                sender= Config.MAIL_USERNAME,
+                recipients=[admin_email],
+                body=f"Attached is the generated report for the {tab_name} tab."
+        )
+
+        file_data = base64.b64decode(pdf_b64)
+
+       # with open("izvestaj_test.pdf", "wb") as f:
+       #         f.write(file_data) ovo ako hocete da vam se sacuva pa da vidite kako izgleda
+
+
+        msg.attach(f"report_{tab_name.lower()}.pdf", "application/pdf", file_data)
+
+        mail.send(msg)
