@@ -12,12 +12,7 @@ companies_bp = Blueprint("companies",__name__, url_prefix='/api/companies')
 def get_all_companies():
     try:
         companies = AirCompanyService.get_all()
-        return jsonify([
-            {
-                "id" : u.id,
-                "name" : u.name,
-            }for u in companies
-        ]), 200
+        return jsonify(companies), 200
     except Exception as e:
         return jsonify({'error': str(e)}),500
 
@@ -39,7 +34,7 @@ def create_company():
     try:
         name = request.json.get('name')
         company = AirCompanyService.create(name)
-        return jsonify(company), 200
+        return jsonify(company), 201
     except Exception as e:
         return jsonify({'error': str(e)}) , 500
 

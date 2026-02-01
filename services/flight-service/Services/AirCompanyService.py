@@ -8,16 +8,20 @@ class AirCompanyService:
 
     @staticmethod
     def get_all():
+        cache_key = f"airCompanies:all"
 
-        # cached_companies = redis_client.hgetall("airCompanies")
+        cached_companies = redis_client.get(cache_key)
 
-        # if cached_companies:
-        #     return cached_companies
+        if cached_companies:
+            return json.loads(cached_companies)
 
         companies = AirCompanies.query.all()
-        # redis_client.set("airCompanies", companies)
 
-        return companies
+        result = [c.to_dict() for c in companies]
+
+        redis_client.set(cache_key, json.dumps(result), ex=300)
+
+        return result
 
     @staticmethod
     def get_by_id(id):
@@ -89,6 +93,5 @@ class AirCompanyService:
         db.session.add(airCompany)
         db.session.commit()
 
-        print(airCompany)
         return airCompany.to_dict()
 

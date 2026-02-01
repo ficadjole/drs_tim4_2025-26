@@ -6,6 +6,7 @@ from Extensions.Bcrypt import bcrypt
 from Routes.UserRoutes import user_bp
 from Auth.JWTManager import jwt
 from Routes.AuthRoutes import auth_bp
+from Routes.Gateway import gateway_bp
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -16,6 +17,7 @@ bcrypt.init_app(app)
 jwt.init_app(app)
 app.register_blueprint(user_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(gateway_bp)
 
 if __name__ == "__main__":
     with app.app_context():

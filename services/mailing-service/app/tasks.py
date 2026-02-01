@@ -12,12 +12,10 @@ def send_email(to,subject,body):
 
 @celery.task(name="email.task.send_ticket_cancelled_email")
 def send_ticket_cancel_email(userId,flightId):
-        # GET user
         user_resp = requests.get(f"http://localhost:5001/api/users/{userId}")
         user_data = user_resp.json()
         recipients = [user_data["email"]]
 
-        # GET ticket (opciono, samo za info u mejlu)
         flight_resp = requests.get(f"http://localhost:5002/api/flights/{flightId}")
         flight_data = flight_resp.json()
 
