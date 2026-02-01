@@ -4,6 +4,7 @@ from Domen.Models.Flights import  Flights
 from Database.InitializationDataBase import db
 from Domen.Config.redis_client import redis_client
 from Services.BoughtTicketsService import BougthTicketsService
+from Services.FlightStatusService import FlightStatusService
 
 class FlightsService:
     @staticmethod
@@ -98,5 +99,18 @@ class FlightsService:
     def get_flights_by_air_company(air_company_id):
         return Flights.query.filter_by(airCompanyId=air_company_id).all()
 
+    @staticmethod
+    def get_flights_by_status(status):
+        flights = Flights.query.all()
+        result = []
 
+        for flight in flights:
+            flight_status = FlightStatusService.get_status(flight)
+
+            if flight_status == status:
+                data = flight.to_dict()
+                data["status"] = flight_status
+                result.append(data)
+        
+        return result
 

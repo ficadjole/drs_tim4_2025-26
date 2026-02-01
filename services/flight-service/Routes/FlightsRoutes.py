@@ -106,3 +106,11 @@ def delete(id):
 
     except Exception as e:
         return jsonify({"message":str(e)}), 500
+
+@flights_bp.route('/status/<string:status>', methods=['GET'])
+def get_flights_by_status(status):
+    try:
+        flights = FlightsService.get_flights_by_status(status.upper())
+        return jsonify(flights), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
