@@ -12,92 +12,66 @@ export default function UserDetails() {
   useEffect(() => {
     if (userId) {
       userApi.getUserById(Number(userId)).then((data) => {
-      setUser(data ?? null);
-    });
+        setUser(data ?? null);
+      });
     }
   }, [userId]);
-    console.log(user)
+
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center text-gray-300">
+      <div className="min-h-screen bg-transparent flex items-center justify-center text-white font-black uppercase tracking-widest">
         Profile loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 px-6 py-12 text-white">
-      <div className="mx-auto max-w-md rounded-lg border border-white/10 bg-white/5 p-6">
-
-        <div className="mb-6 flex items-center gap-3">
-          <h2 className="text-2xl font-bold">My Profile</h2>
-
-          {user.userImageUrl ? (
-            <img
-              alt="User avatar"
-              src={user.userImageUrl}
-              className="h-20 w-20 shrink-0 rounded-full
-                border border-white/10 bg-gray-700 object-cover"
-            />
-          ) : (
-            <span className="text-sm text-gray-400 italic">
-              No profile image
-            </span>
-          )}
+    <div className="min-h-screen bg-transparent px-6 py-12 flex items-center justify-center">
+      
+      <div className="w-full max-w-md rounded-[3rem] bg-black/20 backdrop-blur-3xl border border-white/20 p-10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+        
+        <div className="mb-10 flex flex-col items-center gap-5">
+          <div className="relative">
+            {user.userImageUrl ? (
+              <img
+                alt="User avatar"
+                src={user.userImageUrl}
+                className="h-32 w-32 rounded-[2.5rem] border-4 border-white/10 object-cover shadow-2xl"
+              />
+            ) : (
+              <div className="h-32 w-32 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white text-4xl font-black shadow-2xl">
+                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              </div>
+            )}
+            <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 border-4 border-[#1a1c2e] rounded-full shadow-lg"></div>
+          </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-black text-white uppercase tracking-tight">My Profile</h2>
+            <p className="text-sky-300/60 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Personal Details</p>
+          </div>
         </div>
 
-        <div>
-          <p>
-            <span className="text-gray-400">Name:</span>{" "}
-            <span className="font-medium">{user.firstName}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Surname:</span>{" "}
-            <span className="font-medium">{user.lastName}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Date of birth:</span>{" "}
-            <span className="font-medium">{format(user.dateOfBirth,'dd/MM/yyyy')}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Gender:</span>{" "}
-            <span className="font-medium">{user.gender}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Email:</span>{" "}
-            <span className="font-medium">{user.email}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">State:</span>{" "}
-            <span className="font-medium">{user.state}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Street name:</span>{" "}
-            <span className="font-medium">{user.streetName}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">Street number:</span>{" "}
-            <span className="font-medium">{user.streetNumber}</span>
-          </p>
-
-          <p>
-            <span className="text-gray-400">User role:</span>{" "}
-            <span className="font-medium">{user.userRole}</span>
-          </p>
-
-
-
+        <div className="space-y-4 border-t border-white/10 pt-8">
+          {[
+            { label: "Full Name", value: `${user.firstName} ${user.lastName}` },
+            { label: "Birth Date", value: format(new Date(user.dateOfBirth), 'dd/MM/yyyy') },
+            { label: "Gender", value: user.gender },
+            { label: "Email", value: user.email },
+            { label: "Location", value: `${user.state}, ${user.streetName} ${user.streetNumber}` },
+            { label: "Account Role", value: user.userRole },
+          ].map((item) => (
+            <div key={item.label} className="flex justify-between items-center group">
+              <span className="text-white/40 font-black uppercase text-[9px] tracking-widest group-hover:text-sky-400 transition-colors">{item.label}</span>
+              <span className="text-white text-sm font-bold tracking-wide">{item.value}</span>
+            </div>
+          ))}
         </div>
-        <button onClick={() => navigate(`/edit-user/${userId}`)}
-          className="mt-6 w-full rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold hover:bg-indigo-400">
-          Change
+
+        <button 
+          onClick={() => navigate(`/edit-user/${userId}`)}
+          className="mt-10 w-full rounded-2xl bg-[#00aeef] py-4 text-xs font-black text-white hover:bg-[#0094cc] transition-all shadow-xl shadow-sky-500/20 active:scale-[0.98] uppercase tracking-[0.15em]"
+        >
+          Change Profile
         </button>
       </div>
     </div>

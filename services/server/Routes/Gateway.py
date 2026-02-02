@@ -280,7 +280,7 @@ def update_flight(id):
 
 @gateway_bp.route("/flights/delete/<int:id>", methods=["DELETE"])
 @jwt_required()
-@roles_required("ADMINISTRATOR","MANAGER")
+@roles_required("ADMINISTRATOR")
 def delete_flight(id):
     try:
 

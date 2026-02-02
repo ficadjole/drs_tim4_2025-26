@@ -95,153 +95,162 @@ export default function AutentifikacionaForma({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900 px-4 py-12">
-      <div className="w-full max-w-md bg-gray-700 rounded-xl shadow-lg p-6">
-        <h2 className="text-center text-2xl font-bold text-white mb-6">
-          {jeRegistracija ? "Create your account" : "Sign in"}
+  <div className="relative min-h-screen w-full flex items-center justify-end overflow-hidden bg-slate-900">
+    
+    <div 
+      className="absolute inset-0 z-0"
+      style={{
+        backgroundImage: "url('/pozadina.jpg')", 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+    </div>
+
+    <div className="relative z-10 w-full max-w-xl px-6 md:px-16 lg:mr-24">
+      <div className="bg-blue-950/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/10">
+        
+        <h2 className="text-3xl font-bold text-white mb-2">
+          {jeRegistracija ? "Create account" : "Sign in"}
         </h2>
+        <p className="text-slate-400 mb-6 text-sm italic">
+          {jeRegistracija ? "Please fill in your details below." : "Enter your credentials to access your profile."}
+        </p>
 
-        <form onSubmit={podnesiFormu} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-100 mb-1">Email address</label>
-            <input
-              type="email"
-              value={email}
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-100 mb-1">Password</label>
-            <input
-              type="password"
-              value={lozinka}
-              placeholder="Password"
-              onChange={(e) => setLozinka(e.target.value)}
-              required
-              className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+        <form onSubmit={podnesiFormu} className="space-y-4 max-h-[65vh] overflow-y-auto pr-4 custom-scrollbar">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Email address</label>
+              <input
+                type="email"
+                value={email}
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              />
+            </div>
 
-          {jeRegistracija && (
-            <>
-              <div className="flex gap-3">
-                <div className="w-1/2">
-                  <label className="block text-sm font-medium text-gray-100 mb-1">First name</label>
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Password</label>
+              <input
+                type="password"
+                value={lozinka}
+                placeholder="Password"
+                onChange={(e) => setLozinka(e.target.value)}
+                required
+                className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              />
+            </div>
+
+            {jeRegistracija && (
+              <>
+                <div className="col-span-1">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">First name</label>
                   <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First name"
+                    placeholder="John"
                     required
-                    className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
-                <div className="w-1/2">
-                  <label className="block text-sm font-medium text-gray-100 mb-1">Last name</label>
+                <div className="col-span-1">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Last name</label>
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last name"
+                    placeholder="Doe"
                     required
-                    className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-100 mb-1">Date of birth</label>
-                <Flatpickr
-                  value={dateOfBirth}
-                  onChange={(dates: Date[]) => {
-                    if (dates.length > 0) setDateOfBirth(dates[0].toISOString().split("T")[0]);
-                  }}
-                  options={{
-                    dateFormat: "Y-m-d",
-                    altInput: true,
-                    altFormat: "F j, Y",
-                    allowInput: true,
-                    maxDate: "today",
-                    minDate: "1900-01-01",
-                    monthSelectorType: "dropdown",
-                    // @ts-ignore
-                    yearSelectorType: "dropdown",
-                  }}
-                  className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Select date"
-                />
-              </div>
+                <div className="col-span-1">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Date of birth</label>
+                  <Flatpickr
+                    value={dateOfBirth}
+                    onChange={(dates: Date[]) => {
+                      if (dates.length > 0) setDateOfBirth(dates[0].toISOString().split("T")[0]);
+                    }}
+                    options={{ dateFormat: "Y-m-d", maxDate: "today" }}
+                    className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Select date"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-100 mb-1">Gender</label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                </select>
-              </div>
+                <div className="col-span-1">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Gender</label>
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-100 mb-1">State</label>
-                <input
-                  type="text"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  placeholder="State"
-                  required
-                  className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <div className="w-2/3">
-                  <label className="block text-sm font-medium text-gray-100 mb-1">Street</label>
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">State</label>
                   <input
                     type="text"
-                    value={streetName}
-                    onChange={(e) => setStreetName(e.target.value)}
-                    placeholder="Street"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="State"
                     required
-                    className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
-                <div className="w-1/3">
-                  <label className="block text-sm font-medium text-gray-100 mb-1">Number</label>
-                  <input
-                    type="text"
-                    value={streetNumber}
-                    onChange={(e) => setStreetNumber(e.target.value)}
-                    placeholder="Number"
-                    required
-                    className="block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-              </div>
-            </>
-          )}
 
-          {greska && <p className="text-center text-sm text-red-400">{greska}</p>}
+                <div className="col-span-1 md:col-span-2 flex gap-3">
+                  <div className="flex-grow">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">Street</label>
+                    <input
+                      type="text"
+                      value={streetName}
+                      onChange={(e) => setStreetName(e.target.value)}
+                      placeholder="Street name"
+                      required
+                      className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="w-24">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase">No.</label>
+                    <input
+                      type="text"
+                      value={streetNumber}
+                      onChange={(e) => setStreetNumber(e.target.value)}
+                      placeholder="12"
+                      required
+                      className="w-full rounded-lg bg-slate-900/50 border border-slate-700 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-indigo-500 text-center"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {greska && <p className="text-center text-sm text-red-400 mt-2 font-medium">{greska}</p>}
 
           <button
             type="submit"
-            className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
+            className="w-full justify-center rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-500 shadow-lg shadow-indigo-900/20 transition-all active:scale-95"
           >
-            {jeRegistracija ? "Register" : "Sign in"}
+            {jeRegistracija ? "Create Account" : "Sign In"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-300">
-          {jeRegistracija ? "Already have an account?" : "Not a member?"}{" "}
+        <p className="mt-6 text-center text-sm text-slate-400">
+          {jeRegistracija ? "Already have an account?" : "Not a member yet?"}{" "}
           <button
             onClick={() => setJeRegistracija(!jeRegistracija)}
-            className="font-semibold text-indigo-400 hover:text-indigo-300"
+            className="font-bold text-indigo-400 hover:text-indigo-300 underline underline-offset-4"
           >
             {jeRegistracija ? "Sign in" : "Create an account"}
           </button>
@@ -249,5 +258,22 @@ export default function AutentifikacionaForma({
       </div>
     </div>
 
-  );
+    <style>{`
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #6366f1;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #818cf8;
+      }
+    `}</style>
+  </div>
+);
 }

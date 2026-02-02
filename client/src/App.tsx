@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="App min-h-screen bg-gradient-to-br from-pink-250 via-blue-400 to-blue-200 bg-fixed">
       {prijavljen && <Navbar />}
 
       <Routes>
