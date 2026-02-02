@@ -28,6 +28,14 @@ def getAllFlights():
     except Exception as e:
         return jsonify({"message":str(e)}), 500
 
+@flights_bp.route('/admin/getAll', methods=['GET'])
+def getAllFlightsAdmin():
+    try:
+        flights = FlightsService.get_all_flights_admin()
+        return jsonify([f.to_dict() for f in flights]), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
 @flights_bp.route('/getFlight/<int:id>', methods=['GET'])
 def getFlight(id):
     try:
@@ -117,7 +125,43 @@ def get_flights_by_status(status):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@flights_bp.route('generate-report', methods=['POST'])
+#admin actions
+
+@flights_bp.route("/approve/<int:id>", methods=["PUT"])
+def approve_flight(id):
+    try:
+        flight = FlightsService.approve(id)
+        if not flight:
+            return jsonify({"message": "Flight not found"}), 404
+        return jsonify(flight), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+@flights_bp.route("/reject/<int:id>", methods=["PUT"])
+def reject_flight(id):
+    try:
+        reason = request.json.get("reason")
+        if not reason: 
+            return jsonify({"message": "Rejection reason is required"}), 400
+        flight = FlightsService.reject(id, reason)
+        if not flight:
+            return jsonify({"message": "Flight not found"}), 404
+        
+        return jsonify(flight), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+@flights_bp.route("/cancel/<int:id>", methods=["PUT"])
+def cancel_flight(id):
+    try:
+        flight = FlightsService.cancel(id)
+        if not flight:
+            return jsonify({"message": "Flight not found"}), 404
+        return jsonify(flight), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+    
+@flights_bp.route('/generate-report', methods=['POST'])
 def generate_report():
     data = request.get_json()
     tab_name = data.get('tabName')
@@ -131,5 +175,3 @@ def generate_report():
     success, message = ReportService.generate_and_send(flights, tab_name, admin_email)
 
     return jsonify({"message": message}), 202 if success else 400
-
-   

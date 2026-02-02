@@ -5,12 +5,22 @@ from Database.InitializationDataBase import db
 from Domen.Config.redis_client import redis_client
 from Services.BoughtTicketsService import BougthTicketsService
 from Services.FlightStatusService import FlightStatusService
+from Domen.Enums.FlightApprovalStatus import FlightApprovalStatus
+from Websocket.socket import socketio
 
 class FlightsService:
     @staticmethod
     def get_all_flights():
+        #ovako korisnik vidi samo odobrene letove
+        return Flights.query.filter_by(
+            approvalStatus = FlightApprovalStatus.APPROVED,
+            cancelled = False
+        ).all()
+    
+    @staticmethod
+    def get_all_flights_admin():
         return Flights.query.all()
-
+    
     @staticmethod
     def get_flight_by_id(flight_id):
 
@@ -49,6 +59,14 @@ class FlightsService:
 
         db.session.add(newFlight)
         db.session.commit()
+
+        #notify admins
+        socketio.emit(
+            "flight_created",
+            newFlight.to_dict(),
+            room="admins"
+        )
+
         return newFlight.to_dict()
 
     @staticmethod
@@ -122,3 +140,31 @@ class FlightsService:
         
         return result
 
+    @staticmethod
+    def approve(flight_id):
+        flight = Flights.query.get(flight_id)
+        flight.approvalStatus = FlightApprovalStatus.APPROVED
+        flight.rejectionReason = None
+        db.session.commit()
+        return flight.to_dict()
+    
+    @staticmethod
+    def reject(flight_id, reason):
+        flight = Flights.query.get(flight_id)
+        flight.approvalStatus = FlightApprovalStatus.REJECTED
+        flight.rejectionReason = reason
+        db.session.commit()
+        return flight.to_dict()
+    
+    @staticmethod
+    def cancel(flight_id):
+        flight = Flights.query.get(flight_id)
+
+        status = FlightStatusService.get_status(flight)
+        if status in ["IN_PROGRESS", "FINISHED"]:
+            raise Exception("Flight cannot be cancelled")
+        
+        flight.cancelled = True
+        BougthTicketsService.cancelAllFlights(flight_id)
+        db.session.commit()
+        return flight.to_dict()

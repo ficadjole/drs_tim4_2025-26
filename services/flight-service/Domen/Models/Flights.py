@@ -1,5 +1,6 @@
 from Database.InitializationDataBase import db
 from sqlalchemy.orm import relationship
+from ..Enums.FlightApprovalStatus import FlightApprovalStatus
 
 
 class Flights(db.Model):
@@ -21,6 +22,10 @@ class Flights(db.Model):
 
     cancelled = db.Column(db.Boolean,nullable=False,default=False)
 
+    approvalStatus = db.Column(db.Enum(FlightApprovalStatus),nullable=False,default=FlightApprovalStatus.PENDING)
+
+    rejectionReason = db.Column(db.String(255), nullable=True)
+
     db.relationship("BoughtTickets",back_populates="flight")
 
     def to_dict(self):
@@ -35,6 +40,9 @@ class Flights(db.Model):
             "arrivalAirport": self.arrivalAirport,
             "ticketPrice": self.ticketPrice,
             "createdBy": self.createdBy,
+            "approvalStatus": self.approvalStatus.value,
+            "rejectionReason": self.rejectionReason,
+            "cancelled": self.cancelled
         }
 
     def __repr__(self):
