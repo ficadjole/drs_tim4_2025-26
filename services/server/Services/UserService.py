@@ -1,6 +1,10 @@
+import json
+
 from Domen.Models.Users import Users
 from Database.InitializationDataBase import db
 from Extensions.Bcrypt import bcrypt
+from Domen.Config.redis_client import redis_client
+
 
 class UserService:
     @staticmethod
@@ -30,8 +34,21 @@ class UserService:
     
     @staticmethod
     def get_user_by_id(user_id):
+
+        cache_key = f"user:{user_id}"
+
+        cache = redis_client.get(cache_key)
+
+        if cache:
+            return json.loads(cache)
+
         user = Users.query.get(user_id)
-        return user
+
+        user_data = user.to_dict()
+
+        redis_client.set(cache_key, json.dumps(user_data),ex=300)
+
+        return user_data
 
 
     @staticmethod
@@ -47,8 +64,14 @@ class UserService:
         user = Users.query.get(user_id)
 
         if user:
+            cache_key = f"user:{user_id}"
+
             db.session.delete(user)
             db.session.commit()
+
+
+            redis_client.delete(cache_key)
+
             return True
         
         return False
@@ -56,7 +79,6 @@ class UserService:
     @staticmethod
     def update_user(user_id, data):
         user = Users.query.get(user_id)
-
         if not user:
             return None
         
@@ -77,5 +99,11 @@ class UserService:
                 setattr(user, field, data[field])
 
         db.session.commit()
+
+
+
+        cache_key = f"user:{user_id}"
+        redis_client.delete(cache_key)
+
         return user
     

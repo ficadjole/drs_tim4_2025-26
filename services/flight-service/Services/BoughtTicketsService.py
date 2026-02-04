@@ -71,6 +71,10 @@ class BougthTicketsService:
 
         tickets = BoughtTickets.query.filter_by(flightId=flightId).all()
 
+        if tickets == []:
+            return True
+
+
         for ticket in tickets:
             ticket.cancelled = True
             redis_client.delete(f"ticket:{ticket.id}")

@@ -29,3 +29,21 @@ class Users(db.Model):
 
     def __repr__(self):
         return f"User('{self.email}','{self.firstName}','{self.lastName}','{self.dateOfBirth}','{self.gender}','{self.state}','{self.streetName}','{self.streetNumber}','{self.userImageUrl}','{self.userRole}')"
+
+    def to_dict(self):
+        return {
+            'id':self.id,
+            'email':self.email,
+            'firstName':self.firstName,
+            'lastName':self.lastName,
+            'dateOfBirth':self.dateOfBirth.strftime("%Y-%m-%d %H:%M:%S") if self.dateOfBirth else None,
+            'gender':self.gender.name if self.gender else None,
+            'state':self.state,
+            'streetName':self.streetName,
+            'streetNumber':self.streetNumber,
+            'accountBalance':self.accountBalance,
+            'userRole':self.userRole.name if self.userRole else None,
+            'userImageUrl':self.userImageUrl,
+            'failedAttempts':self.failedAttempts,
+            'blockedUntil':self.blockedUntil.strftime("%Y-%m-%d %H:%M:%S") if self.blockedUntil else None
+        }

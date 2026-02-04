@@ -52,16 +52,29 @@ class UserUpdateDTO:
 
 class UserProfileDTO:
     def __init__(self, user):
-        self.email = user.email
-        self.firstName = user.firstName
-        self.lastName = user.lastName
-        self.dateOfBirth = user.dateOfBirth
-        self.gender = user.gender.name
-        self.state = user.state
-        self.streetName = user.streetName
-        self.streetNumber = user.streetNumber
-        self.userImageUrl = user.userImageUrl
-        self.userRole = user.userRole.name
-        self.accountBalance = user.accountBalance
+        if isinstance(user, dict):
+            self.email = user.get("email")
+            self.firstName = user.get("firstName")
+            self.lastName = user.get("lastName")
+            self.dateOfBirth = user.get("dateOfBirth")
+            self.gender = user.get("gender")
+            self.state = user.get("state")
+            self.streetName = user.get("streetName")
+            self.streetNumber = user.get("streetNumber")
+            self.userImageUrl = user.get("userImageUrl")
+            self.userRole = user.get("userRole")
+            self.accountBalance = user.get("accountBalance")
+        else:
+            self.email = user.email
+            self.firstName = user.firstName
+            self.lastName = user.lastName
+            self.dateOfBirth = user.dateOfBirth.strftime("%Y-%m-%d") if user.dateOfBirth else None
+            self.gender = user.gender.name if user.gender else None
+            self.state = user.state
+            self.streetName = user.streetName
+            self.streetNumber = user.streetNumber
+            self.userImageUrl = user.userImageUrl
+            self.userRole = user.userRole.name if user.userRole else None
+            self.accountBalance = user.accountBalance
     def to_dict(self):
         return self.__dict__

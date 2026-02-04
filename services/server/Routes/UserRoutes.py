@@ -77,11 +77,12 @@ def delete_user(user_id):
 @user_bp.route("/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     try:
+
+
         dto_update = UserUpdateDTO(request.json)
 
         old_user = UserService.get_user_by_id(user_id)
-        old_role = old_user.userRole
-
+        old_role = old_user["userRole"]
         updated_user = UserService.update_user(user_id, dto_update.to_dict())
 
         if not updated_user:
@@ -89,7 +90,7 @@ def update_user(user_id):
 
         if (
             dto_update.to_dict().get("userRole") == "MANAGER"
-            and old_role == UserRoles.USER
+            and old_role == 'USER'
         ):
             requests.post(
                 "http://127.0.0.1:4001/mail/send",

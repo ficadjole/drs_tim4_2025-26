@@ -81,7 +81,6 @@ class FlightsService:
 
         flight.cancelled = True
 
-
         cache_key = f"flight:{flight_id}"
 
         redis_client.delete(cache_key)
