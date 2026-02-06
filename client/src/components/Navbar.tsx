@@ -41,6 +41,13 @@ export default function Navbar() {
           >
             My Profile
           </button>
+
+          <button onClick={() => navigate("/flights")}>Flights</button>
+          {localStorage.getItem("userRole") !== "USER" && (
+            <>
+              <button onClick={() => navigate("/create-flight")}>New Flight</button>
+            </>
+          )}
         </div>
       </div>
 
