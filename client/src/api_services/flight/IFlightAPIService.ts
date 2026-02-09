@@ -4,6 +4,7 @@ import type { Flight } from "../../models/flight/FlightDto";
 export interface IFlightAPIService {
     getAllFlights(): Promise<Flight[]>;
     getAllFlightsAdmin(): Promise<Flight[]>;
+    getMyFlightsManager(): Promise<Flight[]>;
     getFlightById(id: number): Promise<Flight>;
     getFlightsByAirCompany(airCompanyId: number): Promise<Flight[]>;
     getFlightsByStatus(status: string): Promise<Flight[]>;

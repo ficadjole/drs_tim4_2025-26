@@ -9,14 +9,17 @@ export default function FlightList() {
   const nav = useNavigate();
 
   const load = async () => {
-    if (role === "ADMINISTRATOR") {
-      // admin vidi pending (approve/reject)
-      const data = await flightApi.getAllFlightsAdmin();
-      setFlights(data);
-    } else {
-      // user vidi samo approved
-      const data = await flightApi.getAllFlights();
-      setFlights(data);
+    try {
+      if (role === "ADMINISTRATOR") {
+        setFlights(await flightApi.getAllFlightsAdmin());
+      } else if (role === "MANAGER") {
+        setFlights(await flightApi.getMyFlightsManager());
+      } else {
+        setFlights(await flightApi.getAllFlights());
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load flights");
     }
   };
 
@@ -26,10 +29,16 @@ export default function FlightList() {
 
   const statusColor = (status?: string) => {
     switch (status) {
-      case "APPROVED": return "text-green-400";
-      case "PENDING": return "text-yellow-400";
-      case "REJECTED": return "text-red-400";
-      default: return "text-white/60";
+      case "APPROVED":
+        return "text-green-400";
+      case "PENDING":
+        return "text-yellow-400";
+      case "REJECTED":
+        return "text-red-400";
+      case "CANCELLED":
+        return "text-gray-400";
+      default:
+        return "text-white/60";
     }
   };
 
@@ -40,7 +49,7 @@ export default function FlightList() {
           Flights
         </h2>
 
-        {role !== "USER" && (
+        {role === "MANAGER" && (
           <button
             onClick={() => nav("/create-flight")}
             className="rounded-xl bg-sky-500 px-6 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
@@ -56,16 +65,17 @@ export default function FlightList() {
             key={f.id}
             className="rounded-[2.5rem] bg-black/20 backdrop-blur-3xl border border-white/10 p-6 shadow-xl"
           >
-             {role === "ADMINISTRATOR" ? (
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-black uppercase text-white">{f.name}</h3>
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-black uppercase text-white">
+                {f.name}
+              </h3>
+
+              {role !== "USER" && (
                 <span className={`text-xs font-black ${statusColor(f.approvalStatus)}`}>
                   {f.approvalStatus}
                 </span>
-              </div>
-            ) : (
-              <h3 className="text-lg font-black uppercase text-white mb-4">{f.name}</h3>
-            )}
+              )}
+            </div>
 
             <div className="space-y-2 text-sm text-white/70">
               <div><b>From:</b> {f.departureAirport}</div>
@@ -74,7 +84,12 @@ export default function FlightList() {
               <div><b>Price:</b> €{f.ticketPrice}</div>
             </div>
 
-            {/* ADMIN ACTIONS */}
+            {role === "MANAGER" && f.approvalStatus === "REJECTED" && f.rejectionReason && (
+              <div className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                <b>Rejection reason:</b> {f.rejectionReason}
+              </div>
+            )}
+
             {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
               <div className="flex gap-2 mt-6">
                 <button
@@ -99,6 +114,24 @@ export default function FlightList() {
                   Reject
                 </button>
               </div>
+            )}
+
+            {role === "MANAGER" && f.approvalStatus === "REJECTED" && (
+              <button
+                onClick={() => nav(`/edit-flight/${f.id}`)}
+                className="mt-6 w-full rounded-xl bg-yellow-500/20 text-yellow-400 py-2 text-xs font-black uppercase"
+              >
+                Edit & Resend
+              </button>
+            )}
+
+            {role === "USER" && f.approvalStatus === "APPROVED" && (
+              <button
+                onClick={() => nav(`/buy-ticket/${f.id}`)}
+                className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
+              >
+                Buy Ticket
+              </button>
             )}
           </div>
         ))}

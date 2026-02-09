@@ -37,6 +37,15 @@ def getAllFlightsAdmin():
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
+
+@flights_bp.route("/manager/my/<int:manager_id>", methods=["GET"])
+def getManagerFlights(manager_id):
+    try:
+        flights = FlightsService.get_my_flights_as_manager(manager_id)
+        return jsonify([f.to_dict() for f in flights]), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
 @flights_bp.route('/getFlight/<int:id>', methods=['GET'])
 def getFlight(id):
     try:
@@ -112,8 +121,6 @@ def delete(id):
             return jsonify({"message":f"flight with id {id} is cancelled"}), 200
        else:
             return jsonify({"message":f"flight with id {id} not found"}), 404
-
-
 
     except Exception as e:
         return jsonify({"message":str(e)}), 500

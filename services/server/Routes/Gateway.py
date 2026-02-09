@@ -1,7 +1,7 @@
 import json
 import requests
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from Auth.Decorators import roles_required
 from Domen.Enums.UserRoles import UserRoles
 from Domen.Config.redis_client import redis_client
@@ -237,7 +237,7 @@ def getFlightByAirCompany(airCompanyId):
     
 @gateway_bp.route("/flights/create", methods=["POST"])
 @jwt_required()
-@roles_required("ADMINISTRATOR", "MANAGER")
+@roles_required("MANAGER")
 def create_flight():
     try:
         flight_data = request.get_json()
@@ -258,7 +258,7 @@ def create_flight():
     
 @gateway_bp.route("/flights/update/<int:id>", methods=["PUT"])
 @jwt_required()
-@roles_required("ADMINISTRATOR","MANAGER")
+@roles_required("MANAGER")
 def update_flight(id):
     try:
         update_data = request.get_json()
@@ -356,6 +356,23 @@ def get_all_flights_admin():
 
     except Exception as error:
         return jsonify({"message": f"Server error: {error}"}), 500
+    
+@gateway_bp.route("/flights/manager/my", methods=["GET"])
+@jwt_required()
+@roles_required("MANAGER")
+def gateway_get_my_flights():
+    user_id = get_jwt_identity()
+    # claims = get_jwt()
+    # role = claims.get("role")
+
+    # if role != "MANAGER":
+    #     return jsonify({"message": "Forbidden"}), 403
+
+    res = requests.get(
+        f"{Config.FLIGHT_SERVICE_URL}/flights/manager/my/{user_id}"
+    )
+
+    return jsonify(res.json()), res.status_code
 
 @gateway_bp.route("/flights/approve/<int:id>", methods=["PUT"])
 @jwt_required()

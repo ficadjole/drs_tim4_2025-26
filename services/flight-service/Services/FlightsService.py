@@ -22,6 +22,10 @@ class FlightsService:
         return Flights.query.all()
     
     @staticmethod
+    def get_my_flights_as_manager(manager_id):
+        return Flights.query.filter_by(createdBy=manager_id).all()
+
+    @staticmethod
     def get_flight_by_id(flight_id):
 
         cache_key = f"flight:{flight_id}"
@@ -99,7 +103,7 @@ class FlightsService:
 
         if flight is None:
             return None
-
+        
         if hasattr(data, 'name') and data.name is not None:
             flight.name = data.name
         if hasattr(data, 'airCompanyId') and data.airCompanyId is not None:
@@ -116,8 +120,17 @@ class FlightsService:
             flight.arrivalAirport = data.arrivalAirport
         if hasattr(data, 'ticketPrice') and data.ticketPrice is not None:
             flight.ticketPrice = data.ticketPrice
-        if hasattr(data, 'createdBy') and data.createdBy is not None:
-            flight.createdBy = data.createdBy
+
+        if flight.approvalStatus == FlightApprovalStatus.REJECTED:
+            flight.approvalStatus = FlightApprovalStatus.PENDING
+            flight.rejectionReason = None
+
+            #ponovo obavestiti admina
+            socketio.emit(
+            "flight_created",
+            flight.to_dict(),
+            room="admins"
+            )
 
         db.session.commit()
         redis_client.delete(cache_key)

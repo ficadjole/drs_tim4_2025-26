@@ -71,7 +71,6 @@ export default function Navbar() {
           </button>
           {localStorage.getItem("userRole") !== "USER" && (
             <>
-              <button onClick={() => navigate("/create-flight")} className="rounded-full px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all">New Flight</button>
               <button onClick={() => navigate("/create-airline")} className="rounded-full px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all">New Airline</button>
             </>
           )}

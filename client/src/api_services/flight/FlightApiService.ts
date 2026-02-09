@@ -19,20 +19,35 @@ export const flightApi: IFlightAPIService = {
         }
     },
     async getAllFlightsAdmin(): Promise<Flight[]> {
-        try{
+        try {
             const token = localStorage.getItem("token");
             const res = await axios.get<Flight[]>(`${API_URL}/admin/getAll`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             return res.data;
-        } catch (error){
-             let message = "Error while deleting flight.";
+        } catch (error) {
+            let message = "Error while deleting flight.";
             if (axios.isAxiosError(error)) {
                 message = error.response?.data?.message || message;
             }
             throw new Error(message);
         }
     },
+    async getMyFlightsManager(): Promise<Flight[]> {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get<Flight[]>(
+            `${API_URL}/manager/my`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        return res.data;
+    }
+    ,
     async getFlightById(id: number): Promise<Flight> {
         try {
             const res = await axios.get<Flight>(`${API_URL}/${id}`);
@@ -120,7 +135,7 @@ export const flightApi: IFlightAPIService = {
         }
     },
     async approveFlight(id: number): Promise<Flight> {
-        try{
+        try {
             const token = localStorage.getItem("token");
             const res = await axios.put<Flight>(`${API_URL}/approve/${id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -136,7 +151,7 @@ export const flightApi: IFlightAPIService = {
     },
 
     async rejectFlight(id: number, reason: string): Promise<Flight> {
-        try{
+        try {
             const token = localStorage.getItem("token");
             const res = await axios.put<Flight>(
                 `${API_URL}/reject/${id}`,
