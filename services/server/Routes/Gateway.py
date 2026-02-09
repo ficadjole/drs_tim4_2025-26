@@ -62,7 +62,7 @@ def create_company():
                 "details": response.text
             }), 500
 
-        redis_client.delete("flights:all") #ovo moramo raditi da bi podaci bili tacni
+        redis_client.delete("airCompanies:all") #ovo moramo raditi da bi podaci bili tacni
         return jsonify(response.json()), 201
 
     except Exception as error:
@@ -80,7 +80,7 @@ def update_company(air_company_id):
 
         if response.status_code != 200:
             return jsonify({"message":f"Server error: {response.status_code}"}), 500
-        redis_client.delete("flights:all")
+        redis_client.delete("airCompanies:all")
         return jsonify(response.json()), 200
     except Exception as error:
         return jsonify({"message":f"Server error: {error}"}), 500
@@ -98,7 +98,7 @@ def delete_company(air_company_id):
         if response.status_code != 200:
             return jsonify({"message":f"Server: {response.status_code}"}), 500
 
-        redis_client.delete("flights:all")
+        redis_client.delete("airCompanies:all")
 
         return jsonify(response.json()), 200
     except Exception as error:

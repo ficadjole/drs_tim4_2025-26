@@ -32,8 +32,15 @@ def get_company(air_company_id):
 @companies_bp.route('/create', methods=['POST'])
 def create_company():
     try:
-        name = request.json.get('name')
-        company = AirCompanyService.create(name)
+        
+        json_data = AirCompanyCreateDTO(request.json)
+
+        errors = AirCompanyCreateDTO.is_valid(json_data)
+
+        if errors:
+            return jsonify({"message": "Validation failed", "errors": errors}), 400
+        
+        company = AirCompanyService.create(json_data.name)
         return jsonify(company), 201
     except Exception as e:
         return jsonify({'error': str(e)}) , 500
@@ -41,9 +48,13 @@ def create_company():
 @companies_bp.route('/<int:aircompany_id>', methods=['PUT'])
 def update_company(aircompany_id):
     try:
-        name = request.json.get('name')
+        data = request.json
+        name = data.get('name')
 
-        if aircompany_id!=0 and name!="":
+        if not name or name.strip() == "":
+            return jsonify({'error': "Name is required for update"}), 400
+
+        if aircompany_id!=0 :
             company = AirCompanyService.update_by_id(aircompany_id, name)
             return jsonify(company), 200
         else:

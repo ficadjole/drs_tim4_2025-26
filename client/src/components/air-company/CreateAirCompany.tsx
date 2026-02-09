@@ -1,25 +1,42 @@
 import { useState } from "react";
-import { airCompanyApi } from "../../api_services/air-company/AirCompanyAPIService";
 import { useNavigate } from "react-router-dom";
+import { airCompanyApi } from "../../api_services/air-company/AirCompanyAPIService";
+import AirCompanyForm from "./AirCompanyForm";
 
 export default function CreateAirCompany() {
-    const nav = useNavigate();
-    const [name, setName] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const nav = useNavigate();
 
-    const save = (e: React.FormEvent) => {
-        e.preventDefault();
-        airCompanyApi.createCompany({ name }).then(() => nav("/air-companies")); 
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
 
-    return (
-        <div>
-            <h2>Create Airline</h2>
-            <form onSubmit={save}>
-                <label>Name</label>
-                <input value={name} onChange={e => setName(e.target.value)} required/>
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => nav(-1)}>Cancel</button>
-            </form>
-        </div>
-    );
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    
+    if (name.trim().length === 0) {
+      setError("Name cannot be left empty.");
+      return;
+    }
+
+    try {
+      await airCompanyApi.createCompany({ name });
+      nav("/air-companies");
+    } catch (err) {
+      setError("Failed to save. Name might be taken.");
+    }
+  };
+
+  return (
+    <AirCompanyForm
+      title="Create Airline"
+      name={name}
+      onChange={handleChange}
+      onSubmit={save}
+      error={error}
+    />
+  );
 }

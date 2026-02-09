@@ -8,6 +8,12 @@ def create():
     try:
         data = TicketCreateDTO(request.json)
 
+        errors = data.is_valid()
+
+        if errors:
+            return jsonify({"message:": "Validation failed", "errors:": errors}), 400
+
+
         ticket = BougthTicketsService.create(data)
 
         if not ticket:

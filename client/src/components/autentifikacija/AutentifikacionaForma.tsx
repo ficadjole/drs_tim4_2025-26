@@ -6,6 +6,8 @@ import type { User } from "../../models/users/UserDto";
 import { UserRole } from "../../enums/UserRoles";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import { validateUserCreate } from "../../helpers/UserValidation";
+import type { UserCreateDto } from "../../models/users/UserCreateDto";
 
 export default function AutentifikacionaForma({
   authApi,
@@ -33,11 +35,28 @@ export default function AutentifikacionaForma({
 
     if (jeRegistracija) {
 
-      const registerPodaci = { email, lozinka, firstName, lastName, dateOfBirth, gender, state, streetName, streetNumber };
+      const registerPodaci: UserCreateDto = { 
+        email: email, 
+        password: lozinka, 
+        firstName: firstName, 
+        lastName: lastName, 
+        dateOfBirth: dateOfBirth, 
+        gender: gender, 
+        state: state, 
+        streetName: streetName, 
+        streetNumber: streetNumber,
+        accountBalance: 0 
+      };
+
+      const validationErrors = validateUserCreate(registerPodaci);
+      if (validationErrors.length > 0) {
+        setGreska(validationErrors[0]);
+        return;
+      }
 
       try {
 
-        const odgovor = await authApi.register(registerPodaci.email, registerPodaci.lozinka, registerPodaci.firstName, registerPodaci.lastName, registerPodaci.dateOfBirth, registerPodaci.gender, registerPodaci.state, registerPodaci.streetName, registerPodaci.streetNumber);
+        const odgovor = await authApi.register(registerPodaci.email, registerPodaci.password, registerPodaci.firstName, registerPodaci.lastName, registerPodaci.dateOfBirth, registerPodaci.gender, registerPodaci.state, registerPodaci.streetName, registerPodaci.streetNumber);
 
         if (odgovor.accessToken) {
           localStorage.setItem("token", odgovor.accessToken);
@@ -64,6 +83,16 @@ export default function AutentifikacionaForma({
 
     } else {
 
+      if(!email.includes("@")) {
+        setGreska("Please enter a valid email address.");
+        return;
+      }
+
+      if(lozinka.length < 1) {
+        setGreska("Password is required.");
+        return;
+      }
+      
       try {
         const odgovor = await authApi.login(email, lozinka);
 

@@ -88,6 +88,11 @@ def create():
     try:
         json_data = FlightCreateDTO(request.json)
 
+        errors = json_data.is_valid()
+
+        if errors:
+            return jsonify({"message:": "Validation failed", "errors:": errors}), 400
+
         flight = FlightsService.create_flight(json_data)
 
         if not flight:
@@ -102,6 +107,12 @@ def create():
 def update(id):
     try:
         json_data = FlightUpdateDTO(request.json)
+
+        errors = json_data.is_valid()
+
+        if errors:
+            return jsonify({"message:": "Validation failed", "errors:": errors}), 400
+
 
         flight = FlightsService.update_flight(id, json_data)
 

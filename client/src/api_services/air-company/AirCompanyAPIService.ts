@@ -3,7 +3,7 @@ import type { AirCompanyCreateDto } from "../../models/air-company/AirCompanyCre
 import type { AirCompany } from "../../models/air-company/AirCompanyDto";
 import type { IAirCompanyAPIService } from "./IAirCompanyAPIService";
 
-const API_URL = `${import.meta.env.VITE_GATEWAY_URL}/gateway/air_company`;
+const API_URL = `${import.meta.env.VITE_GATEWAY_URL}gateway/air_company`;
 
 export const airCompanyApi: IAirCompanyAPIService = {
     async getAllCompanies(): Promise<AirCompany[]> {

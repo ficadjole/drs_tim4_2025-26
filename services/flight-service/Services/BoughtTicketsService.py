@@ -3,6 +3,7 @@ from Domen.Models.BoughtTickets import BoughtTickets
 from Database.InitializationDataBase import db
 from Domen.Config.redis_client import redis_client
 from workers.celery_client import notify_ticket_cancel,notify_flight_cancelled
+from datetime import datetime
 
 class BougthTicketsService:
     @staticmethod
@@ -32,7 +33,7 @@ class BougthTicketsService:
         newTicket = BoughtTickets(
                 flightId=ticket.flightId,
                 userId=ticket.userId,
-                ticketDate=ticket.ticketDate,
+                ticketDate=ticket.datetime.now(),
                 ticketPrice=ticket.ticketPrice,
                 ticketDescription=ticket.ticketDescription,
         )
