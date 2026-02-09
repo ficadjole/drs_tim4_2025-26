@@ -102,12 +102,20 @@ export default function FlightList() {
                   {f.name}
                 </h3>
 
-                {role !== "USER" && (
+              <div className="flex flex-col items-end gap-1">
+                {f.cancelled && (
+                  <span className="text-xs font-black text-gray-400">
+                    CANCELLED
+                  </span>
+                )}
+
+                {!f.cancelled && role !== "USER" && (
                   <span className={`text-xs font-black ${statusColor(f.approvalStatus)}`}>
                     {f.approvalStatus}
                   </span>
                 )}
               </div>
+            </div>
 
               <div className="space-y-2 text-sm text-white/70">
                 <div><b>From:</b> {f.departureAirport}</div>
@@ -116,38 +124,66 @@ export default function FlightList() {
                 <div><b>Price:</b> €{f.ticketPrice}</div>
               </div>
 
-              {role === "MANAGER" && f.approvalStatus === "REJECTED" && f.rejectionReason && (
-                <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/20 px-4 py-3">
-                  <div className="text-[11px] font-black uppercase tracking-widest text-red-300 mb-1">
-                    Rejection reason
-                  </div>
-                  <div className="text-sm font-semibold text-red-200">
-                    {f.rejectionReason}
-                  </div>
+            {role === "MANAGER" && f.approvalStatus === "REJECTED" && f.rejectionReason && (
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/20 px-4 py-3">
+                <div className="text-[11px] font-black uppercase tracking-widest text-red-300 mb-1">
+                  Rejection reason
                 </div>
-              )}
+                <div className="text-sm font-semibold text-red-200">
+                  {f.rejectionReason}
+                </div>
+              </div>
+            )}
 
-              {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
-                <div className="flex gap-2 mt-6">
-                  <button
-                    onClick={async () => { await flightApi.approveFlight(f.id); load(); }}
-                    className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase"
-                  >
-                    Approve
-                  </button>
+
+            {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={async () => {
+                    await flightApi.approveFlight(f.id);
+                    load();
+                  }}
+                  className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase"
+                >
+                  Approve
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const reason = prompt("Reason for rejection:");
+                    if (!reason) return;
+                    await flightApi.rejectFlight(f.id, reason);
+                    load();
+                  }}
+                  className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
+
+            {role === "ADMINISTRATOR" &&
+              f.approvalStatus === "APPROVED" &&
+              !hasFlightStarted(f.departureTime) && (
+                f.cancelled ? (
+                  <div className="mt-4 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center">
+                    Cancelled
+                  </div>
+                ) : (
                   <button
                     onClick={async () => {
-                      const reason = prompt("Reason for rejection:");
-                      if (!reason) return;
-                      await flightApi.rejectFlight(f.id, reason);
+                      if (!confirm("Are you sure you want to cancel this flight?")) return;
+                      await flightApi.cancelFlight(f.id);
                       load();
                     }}
-                    className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase"
+                    className="mt-4 w-full rounded-xl bg-orange-500/20 text-orange-400 py-2 text-xs font-black uppercase hover:bg-orange-500/30 transition"
                   >
-                    Reject
+                    Cancel flight
                   </button>
-                </div>
+                )
               )}
+
+
 
               {role === "MANAGER" && f.approvalStatus === "REJECTED" && (
                 <button
@@ -158,30 +194,24 @@ export default function FlightList() {
                 </button>
               )}
 
-              {role === "USER" && f.approvalStatus === "APPROVED" && (
+             {role === "USER" &&
+              f.approvalStatus === "APPROVED" &&
+              !f.cancelled && (
                 hasFlightStarted(f.departureTime) ? (
                   <div className="mt-6 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center cursor-not-allowed">
                     Ticket sales closed
                   </div>
-                ) : isAlreadyBought ? (
-                  <button
-                    onClick={() => nav("/my-tickets")}
-                    className="mt-6 w-full rounded-xl bg-emerald-500/20 border border-emerald-500/30 py-2 text-xs font-black uppercase tracking-widest text-emerald-400 hover:bg-emerald-500/30 transition"
-                  >
-                    ✓ Already Purchased
-                  </button>
                 ) : (
                   <button
-                    onClick={() => handleBuy(f)}
-                    className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition shadow-lg shadow-sky-500/20"
+                    onClick={() => nav(`/buy-ticket/${f.id}`)}
+                    className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
                   >
                     Buy Ticket
                   </button>
                 )
               )}
-            </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );
