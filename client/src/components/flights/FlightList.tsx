@@ -76,7 +76,6 @@ export default function FlightList() {
   return (
     <div className="min-h-screen px-6 py-12">
       
-      {/* 1. HEADER & CONTROLS */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
          <div className="flex items-center gap-4">
           <h2 className="text-4xl font-black uppercase text-white tracking-tighter">Flights</h2>
@@ -112,14 +111,12 @@ export default function FlightList() {
         </div>
       </div>
 
-      
       {isBoardOpen && (
         <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
           <Board onClose={() => setIsBoardOpen(false)} />
         </div>
       )}
 
-      {/* 3. FLIGHT CARDS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredFlights.map(f => {
           const isBought = purchasedFlightIds.includes(f.id);
@@ -155,26 +152,40 @@ export default function FlightList() {
               </div>
 
               <div className="mt-6 space-y-2">
-                {role === "MANAGER" && (
-                   <>
-                    {f.approvalStatus === "REJECTED" && (
-                      <div className="mb-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-[11px] text-red-200 italic">
-                         <b>Reason:</b> {f.rejectionReason}
-                      </div>
-                    )}
+                {role === "MANAGER" && f.approvalStatus === "REJECTED" && (
+                  <div className="mt-6 space-y-2">
+                    <div className="mb-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-[11px] text-red-200 italic">
+                      <b>Reason:</b> {f.rejectionReason}
+                    </div>
                     <button 
                       onClick={() => nav(`/edit-flight/${f.id}`)}
-                      className="w-full rounded-xl bg-white/5 border border-white/10 text-white py-2 text-xs font-black uppercase hover:bg-white/10 transition"
+                      className="w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase text-white hover:bg-sky-400 transition shadow-lg shadow-sky-500/20"
                     >
-                      {f.approvalStatus === "REJECTED" ? "Edit & Resend" : "Edit Flight"}
+                      Edit & Resend
                     </button>
-                   </>
+                  </div>
                 )}
 
-                {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
-                  <div className="flex gap-2">
-                    <button onClick={async () => { await flightApi.approveFlight(f.id); load(); }} className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase hover:bg-green-500/30">Approve</button>
-                    <button onClick={async () => { const r = prompt("Reason?"); if(r) { await flightApi.rejectFlight(f.id, r); load(); } }} className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase hover:bg-red-500/30">Reject</button>
+                {role === "ADMINISTRATOR" && (
+                  <div className="flex flex-col gap-2">
+                    {f.approvalStatus === "PENDING" && (
+                      <div className="flex gap-2">
+                        <button onClick={async () => { await flightApi.approveFlight(f.id); load(); }} className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase hover:bg-green-500/30 transition">Approve</button>
+                        <button onClick={async () => { const r = prompt("Reason?"); if(r) { await flightApi.rejectFlight(f.id, r); load(); } }} className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase hover:bg-red-500/30 transition">Reject</button>
+                      </div>
+                    )}
+                    {f.approvalStatus === "APPROVED" && !f.cancelled && !hasStarted && (
+                      <button 
+                        onClick={async () => {
+                          if (!confirm("Are you sure you want to cancel this flight?")) return;
+                          await flightApi.cancelFlight(f.id);
+                          load();
+                        }}
+                        className="w-full rounded-xl bg-orange-500/20 text-orange-400 py-2 text-xs font-black uppercase hover:bg-orange-500/30 transition border border-orange-500/30"
+                      >
+                        Cancel flight
+                      </button>
+                    )}
                   </div>
                 )}
 

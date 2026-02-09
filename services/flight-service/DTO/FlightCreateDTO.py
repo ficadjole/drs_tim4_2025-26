@@ -25,16 +25,6 @@ class FlightCreateDTO:
         if self.flightDuration is not None and self.flightDuration <= 0:
             errors.append("Flight duration must be positive.")
 
-        if self.departureTime:
-            try:
-                dep_date = datetime.strptime(self.departureTime, "%Y-%m-%d %H:%M:%S")
-                if dep_date < datetime.now():
-                    errors.append("Departure time cannot be in the past.")
-            except ValueError:
-                errors.append("Invalid date format. Use YYYY-MM-DD HH:MM:SS.")
-        else:
-            errors.append("Departure time is required.")
-
         return errors
 
 
@@ -55,11 +45,4 @@ class FlightUpdateDTO:
         if self.ticketPrice is not None and self.ticketPrice < 0:
             errors.append("Ticket price cannot be negative.")
         
-        if self.departureTime:
-            try:
-                dep_date = datetime.strptime(self.departureTime, "%Y-%m-%d %H:%M:%S")
-                if dep_date < datetime.now():
-                    errors.append("Updated departure time cannot be in the past.")
-            except ValueError:
-                errors.append("Invalid date format.")
         return errors

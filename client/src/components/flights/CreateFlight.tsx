@@ -13,22 +13,36 @@ const empty: FlightCreateDto = {
   departureAirport: "",
   arrivalAirport: "",
   ticketPrice: 0,
-  createdBy: Number(localStorage.getItem("userId"))
 };
 
 export default function CreateFlight() {
   const [dto, setDto] = useState<FlightCreateDto>(empty);
   const nav = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setDto({ ...dto, [name]: isNaN(Number(value)) ? value : Number(value) });
+    
+    setDto({ ...dto, [name]: value });
   };
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    await flightApi.createFlight(dto);
-    nav("/flights");
+    
+    const payload = {
+      ...dto,
+      airCompanyId: Number(dto.airCompanyId),
+      flightDuration: Number(dto.flightDuration),
+      currentFlightDuration: Number(dto.currentFlightDuration),
+      ticketPrice: Number(dto.ticketPrice),
+    };
+
+    try {
+      await flightApi.createFlight(payload);
+      nav("/flights");
+    } catch (error) {
+      console.error("Greška pri kreiranju:", error);
+
+    }
   };
 
   return (

@@ -114,7 +114,7 @@ def update(id):
             return jsonify({"message:": "Validation failed", "errors:": errors}), 400
 
 
-        flight = FlightsService.update_flight(id, json_data)
+        flight = FlightsService.update_flight(id, request.json)
 
         if not flight:
             return jsonify({"message":f"flight with id {id} not found"}), 404

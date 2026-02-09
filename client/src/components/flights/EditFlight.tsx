@@ -18,7 +18,7 @@ export default function EditFlight() {
         airCompanyId: f.airCompanyId,
         flightDuration: f.flightDuration,
         currentFlightDuration: f.currentFlightDuration,
-        departureTime: f.departureTime?.slice(0, 16), // datetime-local
+        departureTime: f.departureTime?.slice(0, 16),
         departureAirport: f.departureAirport,
         arrivalAirport: f.arrivalAirport,
         ticketPrice: f.ticketPrice

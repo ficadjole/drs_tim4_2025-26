@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App min-h-screen bg-gradient-to-br from-pink-250 via-blue-400 to-blue-200 bg-fixed">
+    <div className="App min-h-screen bg-[#0b4163] text-slate-200 selection:bg-sky-500/30">
       {prijavljen && <Navbar />}
 
       <Routes>
@@ -35,8 +35,8 @@ function App() {
       path="/" 
       element={
         prijavljen 
-          ? (uloga === "ADMINISTRATOR" ? <Navigate to="/users/getAll" /> : <Navigate to="/profile" />)
-          : <AutentifikacionaForma authApi={authApi} onLoginSuccess={() => setPrijavljen(true)} />
+              ? <Navigate to="/flights" /> 
+              : <AutentifikacionaForma authApi={authApi} onLoginSuccess={() => setPrijavljen(true)} />
       } 
     />
 

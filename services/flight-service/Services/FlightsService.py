@@ -7,6 +7,7 @@ from Services.BoughtTicketsService import BougthTicketsService
 from Services.FlightStatusService import FlightStatusService
 from Domen.Enums.FlightApprovalStatus import FlightApprovalStatus
 from Websocket.socket import socketio
+from datetime import datetime
 
 class FlightsService:
     @staticmethod
@@ -98,39 +99,42 @@ class FlightsService:
     @staticmethod
     def update_flight(flight_id, data):
         flight = Flights.query.get(flight_id)
-
-        cache_key = f"flight:{flight_id}"
-
-        if flight is None:
+        if not flight:
             return None
-        
+    
         if flight.approvalStatus != FlightApprovalStatus.REJECTED:
             raise Exception("Only rejected flights can be edited")
-        
-        if hasattr(data, 'name') and data.name is not None:
-            flight.name = data.name
-        if hasattr(data, 'airCompanyId') and data.airCompanyId is not None:
-            flight.airCompanyId = data.airCompanyId
-        if hasattr(data, 'flightDuration') and data.flightDuration is not None:
-            flight.flightDuration = data.flightDuration
-        if hasattr(data, 'currentFlightDuration') and data.currentFlightDuration is not None:
-            flight.currentFlightDuration = data.currentFlightDuration
-        if hasattr(data, 'departureTime') and data.departureTime is not None:
-            flight.departureTime = data.departureTime
-        if hasattr(data, 'departureAirport') and data.departureAirport is not None:
-            flight.departureAirport = data.departureAirport
-        if hasattr(data, 'arrivalAirport') and data.arrivalAirport is not None:
-            flight.arrivalAirport = data.arrivalAirport
-        if hasattr(data, 'ticketPrice') and data.ticketPrice is not None:
-            flight.ticketPrice = data.ticketPrice
+    
+        fields = ["name", "airCompanyId", "flightDuration", "currentFlightDuration", 
+                  "departureAirport", "arrivalAirport", "ticketPrice"]
+
+        for field in fields:
+            if field in data and data[field] is not None:
+                val = data[field]
+                if field in ["airCompanyId", "flightDuration", "currentFlightDuration"]:
+                    val = int(val)
+                elif field == "ticketPrice":
+                    val = float(val)
+                
+                setattr(flight, field, val)
+
+        if 'departureTime' in data and data['departureTime']:
+            try:
+                date_str = data['departureTime'].replace('T', ' ')
+
+                if len(date_str) > 16:
+                    flight.departureTime = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+                else:
+                    flight.departureTime = datetime.strptime(date_str, "%Y-%m-%d %H:%M")
+            except ValueError as ve:
+                print(f"Greška u formatu datuma: {ve}")
+
 
         flight.approvalStatus = FlightApprovalStatus.PENDING
         flight.rejectionReason = None
 
         db.session.commit()
-
         redis_client.delete(f"flight:{flight_id}")
-
         socketio.emit(
             "flight_created",
             flight.to_dict(),
