@@ -74,11 +74,19 @@ export default function FlightList() {
                 {f.name}
               </h3>
 
-              {role !== "USER" && (
-                <span className={`text-xs font-black ${statusColor(f.approvalStatus)}`}>
-                  {f.approvalStatus}
-                </span>
-              )}
+              <div className="flex flex-col items-end gap-1">
+                {f.cancelled && (
+                  <span className="text-xs font-black text-gray-400">
+                    CANCELLED
+                  </span>
+                )}
+
+                {!f.cancelled && role !== "USER" && (
+                  <span className={`text-xs font-black ${statusColor(f.approvalStatus)}`}>
+                    {f.approvalStatus}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2 text-sm text-white/70">
@@ -126,6 +134,29 @@ export default function FlightList() {
               </div>
             )}
 
+            {role === "ADMINISTRATOR" &&
+              f.approvalStatus === "APPROVED" &&
+              !hasFlightStarted(f.departureTime) && (
+                f.cancelled ? (
+                  <div className="mt-4 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center">
+                    Cancelled
+                  </div>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      if (!confirm("Are you sure you want to cancel this flight?")) return;
+                      await flightApi.cancelFlight(f.id);
+                      load();
+                    }}
+                    className="mt-4 w-full rounded-xl bg-orange-500/20 text-orange-400 py-2 text-xs font-black uppercase hover:bg-orange-500/30 transition"
+                  >
+                    Cancel flight
+                  </button>
+                )
+              )}
+
+
+
             {role === "MANAGER" && f.approvalStatus === "REJECTED" && (
               <button
                 onClick={() => nav(`/edit-flight/${f.id}`)}
@@ -135,21 +166,22 @@ export default function FlightList() {
               </button>
             )}
 
-            {role === "USER" && f.approvalStatus === "APPROVED" && (
-              hasFlightStarted(f.departureTime) ? (
-                <div className="mt-6 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center cursor-not-allowed">
-                  Ticket sales closed
-                </div>
-              ) : (
-                <button
-                  onClick={() => nav(`/buy-ticket/${f.id}`)}
-                  className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
-                >
-                  Buy Ticket
-                </button>
-              )
-            )}
-
+             {role === "USER" &&
+              f.approvalStatus === "APPROVED" &&
+              !f.cancelled && (
+                hasFlightStarted(f.departureTime) ? (
+                  <div className="mt-6 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center cursor-not-allowed">
+                    Ticket sales closed
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => nav(`/buy-ticket/${f.id}`)}
+                    className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
+                  >
+                    Buy Ticket
+                  </button>
+                )
+              )}
           </div>
         ))}
       </div>
