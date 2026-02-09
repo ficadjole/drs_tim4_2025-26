@@ -14,5 +14,5 @@ export interface IFlightAPIService {
     approveFlight(id: number): Promise<Flight>;
     rejectFlight(id: number, reason: string): Promise<Flight>;
     cancelFlight(id: number): Promise<Flight>;
-    generateReport(tabName: string, email: string): Promise<void>;
+    generateReport(tabName: string): Promise<void>;
 }

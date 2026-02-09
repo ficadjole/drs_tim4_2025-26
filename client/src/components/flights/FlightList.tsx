@@ -2,65 +2,56 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { flightApi } from "../../api_services/flight/FlightApiService";
 import { ticketsApi } from "../../api_services/ticket/TicketAPIService"; 
+import { airCompanyApi } from "../../api_services/air-company/AirCompanyAPIService"; 
 import type { Flight } from "../../models/flight/FlightDto";
+import Board from "./Board";
 
 export default function FlightList() {
   const [flights, setFlights] = useState<Flight[]>([]);
+  const [companies, setCompanies] = useState<any[]>([]); 
   const [purchasedFlightIds, setPurchasedFlightIds] = useState<number[]>([]); 
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCompanyId, setSelectedCompanyId] = useState("");
+  const [isBoardOpen, setIsBoardOpen] = useState(false);
+
   const role = localStorage.getItem("userRole");
   const userId = Number(localStorage.getItem("userId"));
   const nav = useNavigate();
 
   const load = async () => {
     try {
-      // Učitavanje letova
-      if (role === "ADMINISTRATOR") {
-        setFlights(await flightApi.getAllFlightsAdmin());
-      } else if (role === "MANAGER") {
-        setFlights(await flightApi.getMyFlightsManager());
-      } else {
-        setFlights(await flightApi.getAllFlights());
-      }
+      const [allCompanies] = await Promise.all([airCompanyApi.getAllCompanies()]);
+      setCompanies(allCompanies);
 
-      // Provera kupljenih karata za korisnika
+      let data: Flight[] = [];
+      if (role === "ADMINISTRATOR") data = await flightApi.getAllFlightsAdmin();
+      else if (role === "MANAGER") data = await flightApi.getMyFlightsManager();
+      else data = await flightApi.getAllFlights();
+      
+      setFlights(data);
+
       if (role === "USER" && userId) {
         const myTickets = await ticketsApi.getTicketsByUser(userId);
-        const ids = myTickets.filter(t => !t.cancelled).map(t => t.flightId);
-        setPurchasedFlightIds(ids);
+        setPurchasedFlightIds(myTickets.filter(t => !t.cancelled).map(t => t.flightId));
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to load flights");
     }
   };
 
-  useEffect(() => {
-    load();
-  }, [role]);
+  useEffect(() => { load(); }, [role]);
 
-  // MOJA IZMENA: handleBuy umesto navigacije na drugu stranicu
   const handleBuy = async (f: Flight) => {
-    if (!userId) {
-      alert("Please log in to buy a ticket.");
-      return;
-    }
-
-    const confirmBuy = window.confirm(`Buy ticket for ${f.departureAirport} → ${f.arrivalAirport}?`);
-    if (!confirmBuy) return;
-
+    if (!userId) { alert("Please log in."); return; }
+    if (!window.confirm(`Buy ticket for ${f.name}?`)) return;
     try {
       await ticketsApi.createTicket({
-        userId: userId,
-        flightId: f.id,
-        ticketDescription: `Ticket for ${f.departureAirport} → ${f.arrivalAirport}`,
-        ticketPrice: f.ticketPrice,
+        userId: userId, flightId: f.id,
+        ticketDescription: `Ticket for ${f.name}`, ticketPrice: f.ticketPrice,
       });
-      alert("Ticket purchased successfully!");
-      load(); 
-    } catch (error) {
-      console.error("Purchase failed:", error);
-      alert("Failed to buy ticket.");
-    }
+      alert("Success!"); load(); 
+    } catch { alert("Failed to buy."); }
   };
 
   const statusColor = (status?: string) => {
@@ -68,99 +59,132 @@ export default function FlightList() {
       case "APPROVED": return "text-green-400";
       case "PENDING": return "text-yellow-400";
       case "REJECTED": return "text-red-400";
-      case "CANCELLED": return "text-gray-400";
-      default: return "text-white/60";
+      default: return "text-gray-400";
     }
   };
 
-  const hasFlightStarted = (departureTime: string) => {
-    return new Date(departureTime) <= new Date();
-  };
+  const filteredFlights = flights.filter(f => {
+    const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          f.departureAirport.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          f.arrivalAirport.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCompany = selectedCompanyId === "" || f.airCompanyId === Number(selectedCompanyId);
+    return matchesSearch && matchesCompany;
+  });
+
+  const filterInputStyle = "bg-black/40 border border-white/20 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-sky-500 transition-all backdrop-blur-md placeholder:text-white/30";
 
   return (
     <div className="min-h-screen px-6 py-12">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Flights</h2>
-        {role === "MANAGER" && (
-          <button
-            onClick={() => nav("/create-flight")}
-            className="rounded-xl bg-sky-500 px-6 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
+      
+      {/* 1. HEADER & CONTROLS */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+         <div className="flex items-center gap-4">
+          <h2 className="text-4xl font-black uppercase text-white tracking-tighter">Flights</h2>
+          <button 
+            onClick={() => setIsBoardOpen(!isBoardOpen)}
+            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all border ${
+              isBoardOpen ? 'bg-red-500/10 text-red-400 border-red-500/30' : 'bg-amber-500/20 text-amber-500 border-amber-500/40'
+            }`}
           >
-            New Flight
+            {isBoardOpen ? '✕ Close Board' : '● Open Live Board'}
           </button>
-        )}
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <input 
+            type="text" placeholder="Search destination..." className={filterInputStyle + " w-full md:w-64"}
+            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <select 
+            className={filterInputStyle} value={selectedCompanyId}
+            onChange={(e) => setSelectedCompanyId(e.target.value)}
+            style={{ backgroundColor: '#1a1a1a' }}
+          >
+            <option value="">All Airlines</option>
+            {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+
+          {role === "MANAGER" && (
+            <button onClick={() => nav("/create-flight")} className="rounded-xl bg-sky-500 px-6 py-3 text-xs font-black uppercase text-white hover:bg-sky-400 transition shadow-lg shadow-sky-500/20">
+              New Flight
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {flights.map(f => {
-          const isAlreadyBought = purchasedFlightIds.includes(f.id);
+      
+      {isBoardOpen && (
+        <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+          <Board onClose={() => setIsBoardOpen(false)} />
+        </div>
+      )}
+
+      {/* 3. FLIGHT CARDS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filteredFlights.map(f => {
+          const isBought = purchasedFlightIds.includes(f.id);
+          const hasStarted = new Date(f.departureTime) <= new Date();
 
           return (
-            <div key={f.id} className="rounded-[2.5rem] bg-black/20 backdrop-blur-3xl border border-white/10 p-6 shadow-xl flex flex-col justify-between">
+            <div key={f.id} className="rounded-[2.5rem] bg-black/20 backdrop-blur-3xl border border-white/10 p-6 shadow-xl flex flex-col justify-between transition hover:border-white/20 hover:bg-black/30">
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-black uppercase text-white">{f.name}</h3>
+                  <div>
+                    <h3 className="text-lg font-black uppercase text-white">{f.name}</h3>
+                    <p className="text-[10px] text-white/30 uppercase font-bold tracking-widest">
+                      {companies.find(c => c.id === f.airCompanyId)?.name || "Airline"}
+                    </p>
+                  </div>
                   <div className="flex flex-col items-end gap-1">
-                    {f.cancelled && (
-                      <span className="text-xs font-black text-gray-400 text-[10px] uppercase">CANCELLED</span>
-                    )}
-                    {!f.cancelled && role !== "USER" && (
-                      <span className={`text-xs font-black uppercase text-[10px] ${statusColor(f.approvalStatus)}`}>
+                    {f.cancelled ? (
+                       <span className="text-xs font-black text-red-400/60 text-[10px] uppercase tracking-widest bg-red-500/5 px-2 py-1 rounded-lg">CANCELLED</span>
+                    ) : role !== "USER" && (
+                       <span className={`text-[10px] font-black uppercase ${statusColor(f.approvalStatus)}`}>
                         {f.approvalStatus}
-                      </span>
+                       </span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2 text-sm text-white/70">
-                  <div><b>From:</b> {f.departureAirport}</div>
-                  <div><b>To:</b> {f.arrivalAirport}</div>
-                  <div><b>Departure:</b> {new Date(f.departureTime).toLocaleString()}</div>
-                  <div><b>Price:</b> €{f.ticketPrice}</div>
+                  <div className="flex justify-between"><b>From:</b> <span>{f.departureAirport}</span></div>
+                  <div className="flex justify-between"><b>To:</b> <span>{f.arrivalAirport}</span></div>
+                  <div className="flex justify-between text-[11px]"><b>Departure:</b> <span>{new Date(f.departureTime).toLocaleString()}</span></div>
+                  <div className="flex justify-between text-sky-400"><b>Price:</b> <span className="font-black">€{f.ticketPrice}</span></div>
                 </div>
               </div>
 
-              <div className="mt-6">
-                {/* MANAGER: Rejection reason */}
-                {role === "MANAGER" && f.approvalStatus === "REJECTED" && f.rejectionReason && (
-                  <div className="mb-4 rounded-xl border border-red-500/30 bg-red-500/20 px-4 py-3 text-sm text-red-200">
-                    <b>Reason:</b> {f.rejectionReason}
-                  </div>
+              <div className="mt-6 space-y-2">
+                {role === "MANAGER" && (
+                   <>
+                    {f.approvalStatus === "REJECTED" && (
+                      <div className="mb-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-[11px] text-red-200 italic">
+                         <b>Reason:</b> {f.rejectionReason}
+                      </div>
+                    )}
+                    <button 
+                      onClick={() => nav(`/edit-flight/${f.id}`)}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 text-white py-2 text-xs font-black uppercase hover:bg-white/10 transition"
+                    >
+                      {f.approvalStatus === "REJECTED" ? "Edit & Resend" : "Edit Flight"}
+                    </button>
+                   </>
                 )}
 
-                {/* ADMIN: Approve / Reject */}
                 {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
                   <div className="flex gap-2">
-                    <button onClick={async () => { await flightApi.approveFlight(f.id); load(); }} className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase transition hover:bg-green-500/30">Approve</button>
-                    <button onClick={async () => { const r = prompt("Reason?"); if(r) { await flightApi.rejectFlight(f.id, r); load(); } }} className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase transition hover:bg-red-500/30">Reject</button>
+                    <button onClick={async () => { await flightApi.approveFlight(f.id); load(); }} className="flex-1 rounded-xl bg-green-500/20 text-green-400 py-2 text-xs font-black uppercase hover:bg-green-500/30">Approve</button>
+                    <button onClick={async () => { const r = prompt("Reason?"); if(r) { await flightApi.rejectFlight(f.id, r); load(); } }} className="flex-1 rounded-xl bg-red-500/20 text-red-400 py-2 text-xs font-black uppercase hover:bg-red-500/30">Reject</button>
                   </div>
                 )}
 
-                {/* ADMIN: Cancel Flight */}
-                {role === "ADMINISTRATOR" && f.approvalStatus === "APPROVED" && !hasFlightStarted(f.departureTime) && !f.cancelled && (
-                  <button
-                    onClick={async () => {
-                      if (confirm("Cancel this flight?")) { await flightApi.cancelFlight(f.id); load(); }
-                    }}
-                    className="w-full rounded-xl bg-orange-500/20 text-orange-400 py-2 text-xs font-black uppercase hover:bg-orange-500/30 transition"
-                  >
-                    Cancel flight
-                  </button>
-                )}
-
-                {/* MANAGER: Edit Rejected */}
-                {role === "MANAGER" && f.approvalStatus === "REJECTED" && (
-                  <button onClick={() => nav(`/edit-flight/${f.id}`)} className="w-full rounded-xl bg-yellow-500/20 text-yellow-400 py-2 text-xs font-black uppercase transition hover:bg-yellow-500/30">Edit & Resend</button>
-                )}
-
-                {/* USER: Buy / Already Purchased / Closed */}
                 {role === "USER" && f.approvalStatus === "APPROVED" && !f.cancelled && (
-                  hasFlightStarted(f.departureTime) ? (
-                    <div className="w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center cursor-not-allowed">Sales Closed</div>
-                  ) : isAlreadyBought ? (
-                    <button onClick={() => nav("/my-tickets")} className="w-full rounded-xl bg-emerald-500/20 border border-emerald-500/30 py-2 text-xs font-black uppercase text-emerald-400 transition hover:bg-emerald-500/30">✓ Already Purchased</button>
+                  hasStarted ? (
+                    <div className="w-full rounded-xl bg-white/5 text-white/20 py-2 text-xs font-black uppercase text-center border border-white/5">Closed</div>
+                  ) : isBought ? (
+                    <button onClick={() => nav("/my-tickets")} className="w-full rounded-xl bg-emerald-500/20 border border-emerald-500/30 py-2 text-xs font-black uppercase text-emerald-400">✓ Purchased</button>
                   ) : (
-                    <button onClick={() => handleBuy(f)} className="w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition">Buy Ticket</button>
+                    <button onClick={() => handleBuy(f)} className="w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase text-white hover:bg-sky-400 transition shadow-lg shadow-sky-500/20">Buy Ticket</button>
                   )
                 )}
               </div>

@@ -49,13 +49,15 @@ export default function Navbar() {
             Flights
           </button>
 
-          <button 
-            onClick={() => navigate("/my-tickets")} 
-            className="rounded-full px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all"
-          >
-            My Tickets
-          </button>
+          {role === "USER" && (
+            <button 
+              onClick={() => navigate("/my-tickets")} 
+              className="rounded-full px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all"
+            >
+              My Tickets
+            </button>
 
+          )}
           
           <button 
             onClick={() => navigate("/air-companies")} 

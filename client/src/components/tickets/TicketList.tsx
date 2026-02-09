@@ -80,7 +80,7 @@ export default function TicketList() {
                   </td>
                   
                   <td className="px-6 py-4 text-sm font-medium text-white/80">
-                    ${t.ticketPrice}
+                    €{t.ticketPrice}
                   </td>
 
                   <td className="px-6 py-4 text-sm text-white/60">

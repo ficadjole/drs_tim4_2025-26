@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function AirCompanyList() {
     const [companies, setCompanies] = useState<AirCompany[]>([]);
+    const role = localStorage.getItem("userRole");
     const nav = useNavigate();
 
     const load = () => airCompanyApi.getAllCompanies().then(setCompanies).catch(console.error);
@@ -39,7 +40,8 @@ export default function AirCompanyList() {
                             </h3>
                         </div>
 
-                        <div className="flex gap-3">
+                        {role !== "USER" && (
+                            <div className="flex gap-3">
                             <button
                                 onClick={() => nav(`/edit-airline/${c.id}`)}
                                 className="flex-1 rounded-xl bg-white/5 text-white py-3 text-xs font-black uppercase hover:bg-white/10 transition"
@@ -53,6 +55,8 @@ export default function AirCompanyList() {
                                 Delete
                             </button>
                         </div>
+                        )}
+                        
                     </div>
                 ))}
             </div>
