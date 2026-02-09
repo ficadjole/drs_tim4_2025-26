@@ -20,4 +20,3 @@ class FlightUpdateDTO:
         self.departureAirport = data.get('departureAirport')
         self.arrivalAirport = data.get('arrivalAirport')
         self.ticketPrice = data.get('ticketPrice')
-        self.createdBy = data.get('createdBy')

@@ -1,19 +1,16 @@
-import type { FlightCreateDto } from "../../models/flight/FlightCreateDto";
-
-const inputClass =
-  "w-full rounded-xl bg-black/30 px-4 py-2.5 text-white border border-white/10 focus:border-sky-400 outline-none transition-all";
-
 export default function FlightForm({
   dto,
   onChange,
   onSubmit,
   title
 }: {
-  dto: FlightCreateDto;
+  dto: any;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   title: string;
 }) {
+  const hiddenFields = ["createdBy", "approvalStatus", "rejectionReason", "id"];
+
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-10 text-white">
       <div className="w-full max-w-3xl rounded-[3rem] bg-black/20 backdrop-blur-3xl border border-white/10 p-10 shadow-2xl">
@@ -22,20 +19,22 @@ export default function FlightForm({
         </h3>
 
         <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.entries(dto).map(([key, value]) => (
-            <div key={key}>
-              <label className="block text-[10px] font-black uppercase text-white/40 tracking-widest ml-1 mb-1">
-                {key}
-              </label>
-              <input
-                name={key}
-                value={value as any}
-                onChange={onChange}
-                className={inputClass}
-                required
-              />
-            </div>
-          ))}
+          {Object.entries(dto)
+            .filter(([key]) => !hiddenFields.includes(key))
+            .map(([key, value]) => (
+              <div key={key}>
+                <label className="block text-[10px] font-black uppercase text-white/40 tracking-widest ml-1 mb-1">
+                  {key}
+                </label>
+                <input
+                  name={key}
+                  value={value as any}
+                  onChange={onChange}
+                  className="w-full rounded-xl bg-black/30 px-4 py-2.5 text-white border border-white/10"
+                  required
+                />
+              </div>
+            ))}
 
           <div className="md:col-span-2 flex gap-4 mt-6">
             <button

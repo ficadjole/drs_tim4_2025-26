@@ -104,6 +104,9 @@ class FlightsService:
         if flight is None:
             return None
         
+        if flight.approvalStatus != FlightApprovalStatus.REJECTED:
+            raise Exception("Only rejected flights can be edited")
+        
         if hasattr(data, 'name') and data.name is not None:
             flight.name = data.name
         if hasattr(data, 'airCompanyId') and data.airCompanyId is not None:
@@ -121,19 +124,18 @@ class FlightsService:
         if hasattr(data, 'ticketPrice') and data.ticketPrice is not None:
             flight.ticketPrice = data.ticketPrice
 
-        if flight.approvalStatus == FlightApprovalStatus.REJECTED:
-            flight.approvalStatus = FlightApprovalStatus.PENDING
-            flight.rejectionReason = None
+        flight.approvalStatus = FlightApprovalStatus.PENDING
+        flight.rejectionReason = None
 
-            #ponovo obavestiti admina
-            socketio.emit(
+        db.session.commit()
+
+        redis_client.delete(f"flight:{flight_id}")
+
+        socketio.emit(
             "flight_created",
             flight.to_dict(),
             room="admins"
-            )
-
-        db.session.commit()
-        redis_client.delete(cache_key)
+        )
         return flight.to_dict()
 
     @staticmethod

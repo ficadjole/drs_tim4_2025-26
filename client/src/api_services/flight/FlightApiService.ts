@@ -2,6 +2,7 @@ import axios from "axios";
 import type { IFlightAPIService } from "./IFlightAPIService";
 import type { Flight } from "../../models/flight/FlightDto";
 import type { FlightCreateDto } from "../../models/flight/FlightCreateDto";
+import type { FlightUpdateDto } from "../../models/flight/FlightUpdateDto";
 
 const API_URL = `${import.meta.env.VITE_GATEWAY_URL}gateway/flights`;
 
@@ -101,7 +102,7 @@ export const flightApi: IFlightAPIService = {
             throw new Error(message);
         }
     },
-    async updateFlight(id: number, data: Partial<Flight>): Promise<Flight> {
+    async updateFlight(id: number, data: FlightUpdateDto): Promise<Flight> {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.put<Flight>(`${API_URL}/update/${id}`, data, {
