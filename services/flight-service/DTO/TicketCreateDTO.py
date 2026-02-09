@@ -6,7 +6,7 @@ class TicketCreateDTO:
         self.flightId = data.get('flightId')
         self.ticketDescription = data.get('ticketDescription')
         self.ticketPrice  = data.get('ticketPrice')
-        self.ticketDate = data.get('ticketDate')
+
 
     def is_valid(self):
         errors = []

@@ -56,12 +56,6 @@ export default function Navbar() {
             My Tickets
           </button>
 
-          <button 
-            onClick={() => navigate("/create-ticket")} 
-            className="rounded-full px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/5 hover:text-white transition-all"
-          >
-            Create Ticket
-          </button>
           
           <button 
             onClick={() => navigate("/air-companies")} 

@@ -3,7 +3,7 @@ import type { TicketCreateDto } from "../../models/ticket/TicketCreateDto";
 import type { Ticket } from "../../models/ticket/TicketDto";
 import type { ITicketAPIService } from "./ITicketAPIService";
 
-const API_URL = `${import.meta.env.VITE_GATEWAY_URL}/gateway/tickets`;
+const API_URL = `${import.meta.env.VITE_GATEWAY_URL}gateway/tickets`;
 
 export const ticketsApi: ITicketAPIService = {
     async createTicket(data: TicketCreateDto): Promise<Ticket> {
@@ -25,7 +25,13 @@ export const ticketsApi: ITicketAPIService = {
     },
     async getTicketByID(id: number): Promise<Ticket> {
         try {
-            const res = await axios.get<Ticket>(`${API_URL}/${id}`);
+            const token = localStorage.getItem("token");
+            const res = await axios.get<Ticket>(`${API_URL}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
             return res.data;
         } catch (error) {
             let message = "Error while fetching ticket.";
@@ -37,7 +43,12 @@ export const ticketsApi: ITicketAPIService = {
     },
     async getTicketsByUser(userId: number): Promise<Ticket[]> {
         try {
-            const res = await axios.get<Ticket[]>(`${API_URL}/user-tickets/${userId}`);
+            const token = localStorage.getItem("token");
+            const res = await axios.get<Ticket[]>(`${API_URL}/user-tickets/${userId}`, {
+                 headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         } catch (error) {
             let message = "Error while fetching user tickets.";
@@ -49,7 +60,12 @@ export const ticketsApi: ITicketAPIService = {
     },
     async getTicketsByFlight(ticketId: number): Promise<Ticket[]> {
         try {
-            const res = await axios.get<Ticket[]>(`${API_URL}/flights-tickets/${ticketId}`);
+            const token = localStorage.getItem("token");
+            const res = await axios.get<Ticket[]>(`${API_URL}/flights-tickets/${ticketId}`, {
+                 headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             return res.data;
         } catch (error) {
             let message = "Error while fecthing flight tickets.";

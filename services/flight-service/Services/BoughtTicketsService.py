@@ -33,7 +33,7 @@ class BougthTicketsService:
         newTicket = BoughtTickets(
                 flightId=ticket.flightId,
                 userId=ticket.userId,
-                ticketDate=ticket.datetime.now(),
+                ticketDate= datetime.now(),
                 ticketPrice=ticket.ticketPrice,
                 ticketDescription=ticket.ticketDescription,
         )

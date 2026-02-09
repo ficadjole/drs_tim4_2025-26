@@ -3,5 +3,4 @@ export interface TicketCreateDto {
     flightId: number;
     ticketDescription: string;
     ticketPrice: number;
-    ticketDate: string;
 }
