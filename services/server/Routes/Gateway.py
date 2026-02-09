@@ -240,7 +240,10 @@ def getFlightByAirCompany(airCompanyId):
 @roles_required("MANAGER")
 def create_flight():
     try:
+        user_id = get_jwt_identity()  
         flight_data = request.get_json()
+
+        flight_data["createdBy"] = user_id  
 
         response = requests.post(f"{Config.FLIGHT_SERVICE_URL}/flights/create", json=flight_data)
         

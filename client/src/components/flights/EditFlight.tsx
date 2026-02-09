@@ -18,7 +18,7 @@ export default function EditFlight() {
         airCompanyId: f.airCompanyId,
         flightDuration: f.flightDuration,
         currentFlightDuration: f.currentFlightDuration,
-        departureTime: f.departureTime,
+        departureTime: f.departureTime?.slice(0, 16), // datetime-local
         departureAirport: f.departureAirport,
         arrivalAirport: f.arrivalAirport,
         ticketPrice: f.ticketPrice
@@ -28,7 +28,9 @@ export default function EditFlight() {
 
   if (!dto) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setDto(prev => ({
       ...prev!,
@@ -44,7 +46,7 @@ export default function EditFlight() {
 
   return (
     <FlightForm
-      title={`Edit Flight #${id}`}
+      title={dto.name ? `${dto.name}` : "Edit Flight"}
       dto={dto}
       onChange={handleChange}
       onSubmit={save}

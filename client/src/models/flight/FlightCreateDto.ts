@@ -7,5 +7,4 @@ export interface FlightCreateDto {
     departureAirport: string;
     arrivalAirport: string;
     ticketPrice: number;
-    createdBy: number;
 }

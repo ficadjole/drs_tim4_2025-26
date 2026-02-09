@@ -42,6 +42,10 @@ export default function FlightList() {
     }
   };
 
+  const hasFlightStarted = (departureTime: string) => {
+    return new Date(departureTime) <= new Date();
+  };
+
   return (
     <div className="min-h-screen px-6 py-12">
       <div className="flex justify-between items-center mb-8">
@@ -85,10 +89,16 @@ export default function FlightList() {
             </div>
 
             {role === "MANAGER" && f.approvalStatus === "REJECTED" && f.rejectionReason && (
-              <div className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400">
-                <b>Rejection reason:</b> {f.rejectionReason}
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/20 px-4 py-3">
+                <div className="text-[11px] font-black uppercase tracking-widest text-red-300 mb-1">
+                  Rejection reason
+                </div>
+                <div className="text-sm font-semibold text-red-200">
+                  {f.rejectionReason}
+                </div>
               </div>
             )}
+
 
             {role === "ADMINISTRATOR" && f.approvalStatus === "PENDING" && (
               <div className="flex gap-2 mt-6">
@@ -126,13 +136,20 @@ export default function FlightList() {
             )}
 
             {role === "USER" && f.approvalStatus === "APPROVED" && (
-              <button
-                onClick={() => nav(`/buy-ticket/${f.id}`)}
-                className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
-              >
-                Buy Ticket
-              </button>
+              hasFlightStarted(f.departureTime) ? (
+                <div className="mt-6 w-full rounded-xl bg-gray-500/20 text-gray-400 py-2 text-xs font-black uppercase text-center cursor-not-allowed">
+                  Ticket sales closed
+                </div>
+              ) : (
+                <button
+                  onClick={() => nav(`/buy-ticket/${f.id}`)}
+                  className="mt-6 w-full rounded-xl bg-sky-500 py-2 text-xs font-black uppercase tracking-widest text-white hover:bg-sky-400 transition"
+                >
+                  Buy Ticket
+                </button>
+              )
             )}
+
           </div>
         ))}
       </div>
