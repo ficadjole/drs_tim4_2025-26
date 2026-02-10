@@ -74,6 +74,30 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"error": "An error occurred during deletion"}), 500
 
+@user_bp.route("/add-money/<int:user_id>", methods=["PUT"])
+def add_money(user_id):
+    try:
+
+        money = request.json.get("money")
+
+        if not money:
+            return jsonify({"error": "Money is required"}), 400
+
+        user = UserService.get_user_by_id(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        success = UserService.add_money(user_id, money)
+
+        if success:
+            return jsonify({"message": "Money successfully added"}), 200
+        else:
+            return jsonify({"error": "Money not added"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @user_bp.route("/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     try:

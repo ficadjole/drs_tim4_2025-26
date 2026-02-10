@@ -69,12 +69,25 @@ class UserService:
             db.session.delete(user)
             db.session.commit()
 
-
             redis_client.delete(cache_key)
 
             return True
         
         return False
+
+    @staticmethod
+    def add_money(user_id, money):
+        user:Users = Users.query.get(user_id)
+        if not user:
+            raise ValueError("User does not exist")
+
+        user.accountBalance += money
+        cache_key = f"user:{user_id}"
+        db.session.commit()
+
+        redis_client.delete(cache_key)
+
+        return True
     
     @staticmethod
     def update_user(user_id, data):

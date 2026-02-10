@@ -36,5 +36,13 @@ export const userApi = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return res.data;
+  },
+
+  async addMoney(id:number,money:number) :Promise<boolean>{
+    const token = localStorage.getItem("token");
+    const res = await axios.put(`${API_URL}/add-money/${id}`,{money: money},{
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return  res.data;
   }
 };
