@@ -17,6 +17,34 @@ export default function UserDetails() {
     }
   }, [userId]);
 
+  const [amount, setAmount] = useState<number | "">("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!amount || amount <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
+
+    try {
+
+      const res = await userApi.addMoney(parseInt(userId!),amount)
+
+      if(res){
+        alert(`Money added successfully`)
+      }else{
+        alert('Money is not successful')
+      }
+
+      navigate(-1);
+    } catch (err) {
+      alert(`Failed to save. Name might be taken.${err}`);
+    }
+
+  };
+
+
   if (!user) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center text-white font-black uppercase tracking-widest">
@@ -73,11 +101,28 @@ export default function UserDetails() {
         >
           Change Profile
         </button>
-        <button
-            className="mt-5 w-full rounded-2xl bg-[#00aeef] py-4 text-xs font-black text-white hover:bg-[#0094cc] transition-all shadow-xl shadow-sky-500/20 active:scale-[0.98] uppercase tracking-[0.15em]"
-        >
-          Add money to account
-        </button>
+    <form onSubmit={handleSubmit} className="flex items-center gap-4 mt-5">
+      <input
+        type="number"
+        min="0"
+        step="100"
+        value={amount}
+        onChange={(e) =>
+          setAmount(e.target.value === "" ? "" : Number(e.target.value))
+        }
+        placeholder="Amount"
+        className="w-40 rounded-2xl bg-black/30 px-4 py-4 text-white border border-white/10 focus:border-sky-400 focus:bg-black/40 outline-none transition-all placeholder:text-slate-500 font-bold text-sm"
+      />
+
+      <button
+        type="submit"
+        className="rounded-2xl bg-[#00aeef] px-10 py-4 text-xs font-black text-white hover:bg-[#0094cc] transition-all shadow-xl shadow-sky-500/20 active:scale-[0.98] uppercase tracking-[0.15em]"
+      >
+        Add money
+      </button>
+    </form>
+
+
       </div>
     </div>
   );
