@@ -4,6 +4,8 @@ from Database.InitializationDataBase import db
 from Domen.Config.redis_client import redis_client
 from workers.celery_client import notify_ticket_cancel,notify_flight_cancelled
 from datetime import datetime
+from Services.FlightStatusService import FlightStatusService
+from Domen.Models.Flights import Flights
 
 class BougthTicketsService:
     @staticmethod
@@ -92,6 +94,40 @@ class BougthTicketsService:
 
         return True
 
+    @staticmethod
+    def rate_ticket(ticket_id, user_id, rating):
+        ticket = BoughtTickets.query.get(ticket_id)
+
+        if not ticket:
+            raise Exception("Ticket not found")
+
+        if ticket.userId != int(user_id):
+            raise Exception("You can rate only your own ticket")
 
 
+        if ticket.cancelled:
+            raise Exception("Cancelled ticket cannot be rated")
 
+        if ticket.rating is not None:
+            raise Exception("Ticket already rated")
+
+        flight = Flights.query.get(ticket.flightId)
+        status = FlightStatusService.get_status(flight)
+
+        if status != "FINISHED":
+            raise Exception("Flight is not finished yet")
+
+        if rating < 1 or rating > 5:
+            raise Exception("Rating must be between 1 and 5")
+
+        ticket.rating = rating
+        db.session.commit()
+
+        redis_client.delete(f"ticket:{ticket.id}")
+
+        return ticket.to_dict()
+
+    @staticmethod
+    def get_all_ratings():
+        tickets = BoughtTickets.query.filter(BoughtTickets.rating.isnot(None)).all()
+        return [t.to_dict() for t in tickets]

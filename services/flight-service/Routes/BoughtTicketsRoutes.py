@@ -51,6 +51,7 @@ def get_by_user(userId):
                 "cancelled":u.cancelled,
                 "ticketDescription":u.ticketDescription,
                 "ticketDate":u.ticketDate,
+                "rating":u.rating,
             }for u in tickets
         ]), 200
     except Exception as e:
@@ -73,6 +74,7 @@ def get_by_flight(flightId):
                 "cancelled":u.cancelled,
                 "ticketDescription":u.ticketDescription,
                 "ticketDate":u.ticketDate,
+                "rating":u.rating,
             }for u in tickets
         ]), 200
     except Exception as e:
@@ -95,3 +97,24 @@ def cancel(ticketId):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@ticktes_bp.route('/rate/<int:ticket_id>', methods=['PUT'])
+def rate_ticket(ticket_id):
+    try:
+        data = request.json
+        rating = data.get("rating")
+        user_id = data.get("userId")  # ili iz tokena kasnije
+
+        ticket = BougthTicketsService.rate_ticket(ticket_id, user_id, rating)
+        return jsonify(ticket), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@ticktes_bp.route('/ratings', methods=['GET'])
+def get_all_ratings():
+    try:
+        ratings = BougthTicketsService.get_all_ratings()
+        return jsonify(ratings), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

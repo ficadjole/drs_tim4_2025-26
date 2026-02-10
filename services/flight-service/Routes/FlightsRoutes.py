@@ -12,20 +12,8 @@ flights_bp = Blueprint('flights_bp', __name__, url_prefix='/api/flights')
 def getAllFlights():
     try:
         flights = FlightsService.get_all_flights()
-        return jsonify([
-            {
-                "id" : f.id,
-                "name" : f.name,
-                "airCompanyId": f.airCompanyId,
-                "flightDuration":f.flightDuration,
-                "currentFlightDuration":f.currentFlightDuration,
-                "departureTime":f.departureTime,
-                "departureAirport":f.departureAirport,
-                "arrivalAirport":f.arrivalAirport,
-                "ticketPrice":f.ticketPrice,
-                "approvalStatus": f.approvalStatus.name,
-            }for f in flights
-        ])
+        return jsonify([f.to_dict() for f in flights]), 200
+
     except Exception as e:
         return jsonify({"message":str(e)}), 500
 

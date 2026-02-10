@@ -31,7 +31,7 @@ export const ticketsApi: ITicketAPIService = {
                     Authorization: `Bearer ${token}`
                 }
             });
-            
+
             return res.data;
         } catch (error) {
             let message = "Error while fetching ticket.";
@@ -45,7 +45,7 @@ export const ticketsApi: ITicketAPIService = {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.get<Ticket[]>(`${API_URL}/user-tickets/${userId}`, {
-                 headers: {
+                headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
@@ -62,7 +62,7 @@ export const ticketsApi: ITicketAPIService = {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.get<Ticket[]>(`${API_URL}/flights-tickets/${ticketId}`, {
-                 headers: {
+                headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
@@ -78,7 +78,7 @@ export const ticketsApi: ITicketAPIService = {
     async cancelTicket(ticketId: number): Promise<void> {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`${API_URL}/cancel/${ticketId}`, undefined, { 
+            await axios.put(`${API_URL}/cancel/${ticketId}`, undefined, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -90,5 +90,29 @@ export const ticketsApi: ITicketAPIService = {
             }
             throw new Error(message);
         }
+    },
+    async rateTicket(ticketId: number, rating: number): Promise<Ticket> {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await axios.put<Ticket>(
+                `${API_URL}/rate/${ticketId}`,
+                { rating },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Error while rating ticket.";
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.error || message;
+            }
+            throw new Error(message);
+        }
     }
+
 }

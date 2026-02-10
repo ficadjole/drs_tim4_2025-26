@@ -9,6 +9,7 @@ class BoughtTickets(db.Model):
     cancelled = db.Column(db.Boolean,nullable=False,default=False)
     ticketDescription = db.Column(db.String(255),nullable=False)
     ticketDate = db.Column(db.DateTime,nullable=False)
+    rating = db.Column(db.Integer, nullable=True) #null dok se ne oceni
     flight = db.relationship("Flights")
 
     def to_dict(self):
@@ -20,6 +21,7 @@ class BoughtTickets(db.Model):
             "cancelled": self.cancelled,
             "ticketDescription": self.ticketDescription,
             "ticketDate": self.ticketDate.strftime("%Y-%m-%d %H:%M:%S") if self.ticketDate else None,
+            "rating": self.rating,
             #proverava da li nije null, ako je null bice None
         }
 

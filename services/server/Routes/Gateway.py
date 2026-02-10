@@ -178,6 +178,39 @@ def cancel_ticket(ticket_id):
 
     except Exception as error:
         return jsonify({"message":f"Server: {error}"}), 500
+    
+@gateway_bp.route("/tickets/rate/<int:ticket_id>", methods=["PUT"])
+@jwt_required()
+def rate_ticket_gateway(ticket_id):
+    try:
+        user_id = get_jwt_identity()
+        data = request.json
+        data["userId"] = user_id
+
+        response = requests.put(
+            f"{Config.FLIGHT_SERVICE_URL}/tickets/rate/{ticket_id}",
+            json=data
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except Exception as error:
+        return jsonify({"message": f"Server: {error}"}), 500
+
+@gateway_bp.route("/tickets/ratings", methods=["GET"])
+@jwt_required()
+@roles_required("ADMINISTRATOR")
+def get_all_ratings_gateway():
+    try:
+        response = requests.get(
+            f"{Config.FLIGHT_SERVICE_URL}/tickets/ratings"
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except Exception as error:
+        return jsonify({"message": f"Server: {error}"}), 500
+
 # endregion
 
 #region flights

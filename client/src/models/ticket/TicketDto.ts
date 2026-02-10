@@ -6,4 +6,5 @@ export interface Ticket {
     cancelled: boolean;
     ticketDescription: string;
     ticketDate: string;
+    rating?: number | null;
 }

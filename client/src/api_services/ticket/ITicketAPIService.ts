@@ -7,4 +7,6 @@ export interface ITicketAPIService {
     getTicketsByUser(userId: number): Promise<Ticket[]>;
     getTicketsByFlight(ticketId: number): Promise<Ticket[]>;
     cancelTicket(ticketId: number): Promise<void>;
+    rateTicket(ticketId: number, rating: number): Promise<Ticket>;
+
 }
