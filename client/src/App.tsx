@@ -13,6 +13,7 @@ import TicketList from './components/tickets/TicketList';
 import AirCompanyList from './components/air-company/AirCompanyList';
 import CreateAirCompany from './components/air-company/CreateAirCompany';
 import EditAirCompany from './components/air-company/EditAirCompany';
+import AdminRatings from './components/tickets/AdminRatings';
 
 function App() {
   const [prijavljen, setPrijavljen] = useState<boolean>(false);
@@ -55,6 +56,7 @@ function App() {
     <Route path="/air-companies" element={<AirCompanyList/>}/>
     <Route path="/create-airline" element={prijavljen ? <CreateAirCompany/> : <Navigate to="/"/>}/>
     <Route path="/edit-airline/:id" element={prijavljen ? <EditAirCompany/> : <Navigate to="/"/>}/>
+    <Route path="/admin/ratings" element={prijavljen ? <AdminRatings/> : <Navigate to="/"/>}/>
   </Routes>
     </div>
   );

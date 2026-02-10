@@ -113,6 +113,38 @@ export const ticketsApi: ITicketAPIService = {
             }
             throw new Error(message);
         }
+    },
+    async getAllRatings(): Promise<Ticket[]> {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.get<Ticket[]>(
+                `${API_URL}/ratings`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            return res.data;
+        } catch (error) {
+            let message = "Error while fetching ratings.";
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+            throw new Error(message);
+        }
+    },
+    async getRatingsByFlight(): Promise<
+        { flightId: number; avgRating: number; count: number }[]
+    > {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+            `${API_URL}/ratings/by-flight`,
+            {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+        );
+        return res.data;
     }
 
 }

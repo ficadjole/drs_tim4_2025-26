@@ -6,6 +6,7 @@ from workers.celery_client import notify_ticket_cancel,notify_flight_cancelled
 from datetime import datetime
 from Services.FlightStatusService import FlightStatusService
 from Domen.Models.Flights import Flights
+from sqlalchemy import func
 
 class BougthTicketsService:
     @staticmethod
@@ -131,3 +132,26 @@ class BougthTicketsService:
     def get_all_ratings():
         tickets = BoughtTickets.query.filter(BoughtTickets.rating.isnot(None)).all()
         return [t.to_dict() for t in tickets]
+
+    @staticmethod
+    def get_rating_stats_by_flight():
+        results = (
+            db.session.query(
+                BoughtTickets.flightId,
+                func.avg(BoughtTickets.rating).label("avg_rating"),
+                func.count(BoughtTickets.rating).label("count")
+            )
+            .filter(BoughtTickets.rating.isnot(None))
+            .group_by(BoughtTickets.flightId)
+            .all()
+        )
+
+        return [
+            {
+                "flightId": r.flightId,
+                "avgRating": round(float(r.avg_rating), 1),
+                "count": r.count
+            }
+            for r in results
+        ]
+

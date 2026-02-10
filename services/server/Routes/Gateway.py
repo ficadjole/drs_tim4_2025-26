@@ -199,7 +199,7 @@ def rate_ticket_gateway(ticket_id):
 
 @gateway_bp.route("/tickets/ratings", methods=["GET"])
 @jwt_required()
-@roles_required("ADMINISTRATOR")
+# @roles_required("ADMINISTRATOR")
 def get_all_ratings_gateway():
     try:
         response = requests.get(
@@ -210,6 +210,17 @@ def get_all_ratings_gateway():
 
     except Exception as error:
         return jsonify({"message": f"Server: {error}"}), 500
+    
+@gateway_bp.route("/tickets/ratings/by-flight", methods=["GET"])
+def get_ratings_by_flight_gateway():
+    try:
+        response = requests.get(
+            f"{Config.FLIGHT_SERVICE_URL}/tickets/ratings/by-flight"
+        )
+        return jsonify(response.json()), response.status_code
+    except Exception as error:
+        return jsonify({"message": f"Server: {error}"}), 500
+
 
 # endregion
 

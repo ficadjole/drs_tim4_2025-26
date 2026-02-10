@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -22,16 +23,16 @@ export default function Navbar() {
         </span>
 
         <div className="flex items-center gap-6">
-          {/* Linkovi - koristimo suptilniji font i hover efekte */}
-          <NavLink label="Flights" onClick={() => navigate("/flights")} />
-          <NavLink label="Airlines" onClick={() => navigate("/air-companies")} />
-          {role === "USER" && <NavLink label="My Tickets" onClick={() => navigate("/my-tickets")} />}
-          {role === "ADMINISTRATOR" && <NavLink label="Users" onClick={() => navigate("/users/getAll")} highlight />}
+          <NavLink label="Flights" onClick={() => navigate("/flights")} active={location.pathname === "/flights"}/>
+          <NavLink label="Airlines" onClick={() => navigate("/air-companies")} active={location.pathname === "/air-companies"}/>
+          {role === "USER" && <NavLink label="My Tickets" onClick={() => navigate("/my-tickets")} active={location.pathname === "/my-tickets"}/>}
+          {role === "ADMINISTRATOR" && <NavLink label="Users" onClick={() => navigate("/users/getAll")} active={location.pathname === "/users/getAll"}/>}
+          {role === "ADMINISTRATOR" && <NavLink label="Ratings" onClick={() => navigate("admin/ratings")} active={location.pathname === "/admin/ratings"}/>}
         </div>
       </div>
 
       <div className="flex items-center gap-6">
-        <button 
+        <button
           onClick={() => navigate("/profile")}
           className="text-xs font-black uppercase tracking-widest text-white/70 hover:text-white transition-colors"
         >
@@ -48,12 +49,14 @@ export default function Navbar() {
   );
 }
 
-const NavLink = ({ label, onClick, highlight = false }: any) => (
+const NavLink = ({ label, onClick, active = false }: any) => (
   <button
     onClick={onClick}
-    className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-sky-400 ${
-      highlight ? 'text-sky-400 bg-sky-400/10 px-4 py-2 rounded-full' : 'text-white/50'
-    }`}
+    className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all
+      ${active
+        ? "text-sky-400 bg-sky-400/10 px-4 py-2 rounded-full"
+        : "text-white/50 hover:text-sky-400"}
+    `}
   >
     {label}
   </button>

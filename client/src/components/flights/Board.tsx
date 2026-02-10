@@ -47,7 +47,7 @@ export default function Board({ onClose }: BoardProps) {
   const [live, setLive] = useState<Flight[]>([]);
   const [archive, setArchive] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-    const [reportTab, setReportTab] = useState("NOT_STARTED");
+  const [reportTab, setReportTab] = useState("NOT_STARTED");
 
   const loadAllStatuses = async () => {
     try {
@@ -70,13 +70,13 @@ export default function Board({ onClose }: BoardProps) {
 
   useEffect(() => {
     loadAllStatuses();
-    const interval = setInterval(loadAllStatuses, 10000); 
+    const interval = setInterval(loadAllStatuses, 10000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="w-full bg-sky-900/40 backdrop-blur-2xl border border-white/20 rounded-[2.5rem] p-8 shadow-2xl mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-      
+
       <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
         <div>
           <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">
@@ -91,36 +91,36 @@ export default function Board({ onClose }: BoardProps) {
         </div>
 
         {/* REPORT PANEL - Samo za Admina */}
-{localStorage.getItem("userRole") === "ADMINISTRATOR" && (
-  <div className="flex items-center gap-2 bg-white/5 p-2 rounded-2xl border border-white/10">
-    <select 
-      value={reportTab}
-      onChange={(e) => setReportTab(e.target.value)}
-      className="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-white focus:outline-none focus:border-sky-500"
-    >
-      <option value="NOT_STARTED">Upcoming (Not Started)</option>
-      <option value="IN_PROGRESS">Live (In Progress)</option>
-      <option value="FINISHED">History (Finished)</option>
-      <option value="CANCELLED">Cancelled</option>
-    </select>
-    
-    <button 
-      onClick={async () => {
-        try {
-          await flightApi.generateReport(reportTab);
-          alert(`Report for ${reportTab} sent to server!`);
-        } catch (err: any) {
-          alert(err.message);
-        }
-      }}
-      className="bg-sky-500 hover:bg-sky-400 px-4 py-1.5 rounded-xl text-white text-[10px] font-black uppercase transition-all shadow-lg shadow-sky-500/20"
-    >
-      Send Report
-    </button>
-  </div>
-)}
+        {localStorage.getItem("userRole") === "ADMINISTRATOR" && (
+          <div className="flex items-center gap-2 bg-white/5 p-2 rounded-2xl border border-white/10">
+            <select
+              value={reportTab}
+              onChange={(e) => setReportTab(e.target.value)}
+              className="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-white focus:outline-none focus:border-sky-500"
+            >
+              <option value="NOT_STARTED">Upcoming (Not Started)</option>
+              <option value="IN_PROGRESS">Live (In Progress)</option>
+              <option value="FINISHED">History (Finished)</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
 
-        <button 
+            <button
+              onClick={async () => {
+                try {
+                  await flightApi.generateReport(reportTab);
+                  alert(`Report for ${reportTab} sent to server!`);
+                } catch (err: any) {
+                  alert(err.message);
+                }
+              }}
+              className="bg-sky-500 hover:bg-sky-400 px-4 py-1.5 rounded-xl text-white text-[10px] font-black uppercase transition-all shadow-lg shadow-sky-500/20"
+            >
+              Send Report
+            </button>
+          </div>
+        )}
+
+        <button
           onClick={onClose}
           className="bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-2 rounded-xl text-white text-[10px] font-black uppercase transition-all active:scale-95"
         >
@@ -148,7 +148,7 @@ function BoardColumn({ title, flights, bgColor, borderColor, isLive }: any) {
           {flights.length}
         </span>
       </div>
-      
+
       <div className="space-y-3">
         {flights.length > 0 ? flights.map((f: any) => (
           <div key={f.id} className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition group">
@@ -157,7 +157,7 @@ function BoardColumn({ title, flights, bgColor, borderColor, isLive }: any) {
                 {f.name}
               </span>
               <span className="text-white/30 font-mono text-[10px]">
-                {new Date(f.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                {new Date(f.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
             <div className="text-white font-bold text-sm uppercase leading-tight tracking-tight">
@@ -165,16 +165,16 @@ function BoardColumn({ title, flights, bgColor, borderColor, isLive }: any) {
             </div>
 
             {isLive && (
-               <FlightTimer 
-                 departureTime={f.departureTime} 
-                 duration={f.flightDuration} 
-               />
+              <FlightTimer
+                departureTime={f.departureTime}
+                duration={f.flightDuration}
+              />
             )}
 
             {f.cancelled && (
-               <div className="mt-2 text-red-500 text-[9px] font-black uppercase tracking-tighter bg-red-500/10 w-fit px-2 py-0.5 rounded border border-red-500/20">
-                 Flight Cancelled
-               </div>
+              <div className="mt-2 text-red-500 text-[9px] font-black uppercase tracking-tighter bg-red-500/10 w-fit px-2 py-0.5 rounded border border-red-500/20">
+                Flight Cancelled
+              </div>
             )}
           </div>
         )) : (

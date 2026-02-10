@@ -118,3 +118,12 @@ def get_all_ratings():
         return jsonify(ratings), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@ticktes_bp.route('/ratings/by-flight', methods=['GET'])
+def ratings_by_flight():
+    try:
+        data = BougthTicketsService.get_rating_stats_by_flight()
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+

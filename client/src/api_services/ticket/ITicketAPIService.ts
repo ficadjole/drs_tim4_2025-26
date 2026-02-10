@@ -8,5 +8,6 @@ export interface ITicketAPIService {
     getTicketsByFlight(ticketId: number): Promise<Ticket[]>;
     cancelTicket(ticketId: number): Promise<void>;
     rateTicket(ticketId: number, rating: number): Promise<Ticket>;
-
+    getAllRatings(): Promise<Ticket[]>;
+    getRatingsByFlight(): Promise<{ flightId: number; avgRating: number; count: number }[]>;
 }
