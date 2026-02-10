@@ -6,8 +6,9 @@ from Domen.Config.redis_client import redis_client
 from Services.BoughtTicketsService import BougthTicketsService
 from Services.FlightStatusService import FlightStatusService
 from Domen.Enums.FlightApprovalStatus import FlightApprovalStatus
-from Websocket.socket import socketio
 from datetime import datetime
+import requests
+from Domen.Config.config import Config
 
 class FlightsService:
     @staticmethod
@@ -63,19 +64,25 @@ class FlightsService:
             arrivalAirport=flight.arrivalAirport,
             ticketPrice=flight.ticketPrice,
             createdBy=flight.createdBy,
+            approvalStatus=FlightApprovalStatus.PENDING,
+            cancelled=False
         )
 
         db.session.add(newFlight)
         db.session.commit()
 
-        #notify admins
-        socketio.emit(
-            "flight_created",
-            newFlight.to_dict(),
-            room="admins"
-        )
+        flight_data = newFlight.to_dict()
 
-        return newFlight.to_dict()
+        try:
+            requests.post(
+                f"{Config.SERVER_URL}/api/gateway/internal/flight-created",
+                json=flight_data,
+                timeout=2
+            )
+        except Exception as e:
+            print("Gateway notify failed:", e)
+
+        return flight_data
 
     @staticmethod
     def delete_flight(flight_id):
@@ -135,11 +142,6 @@ class FlightsService:
 
         db.session.commit()
         redis_client.delete(f"flight:{flight_id}")
-        socketio.emit(
-            "flight_created",
-            flight.to_dict(),
-            room="admins"
-        )
         return flight.to_dict()
 
     @staticmethod

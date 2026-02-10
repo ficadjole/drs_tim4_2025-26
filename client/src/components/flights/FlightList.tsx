@@ -5,6 +5,7 @@ import { ticketsApi } from "../../api_services/ticket/TicketAPIService";
 import { airCompanyApi } from "../../api_services/air-company/AirCompanyAPIService";
 import type { Flight } from "../../models/flight/FlightDto";
 import Board from "./Board";
+import { socket } from "../../web-socket/Socket";
 
 export default function FlightList() {
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -69,6 +70,37 @@ export default function FlightList() {
   };
 
   useEffect(() => { load(); }, [role]);
+
+  useEffect(() => {
+    if (role !== "ADMINISTRATOR") return;
+
+    // kad se socket konektuje
+    socket.on("connect", () => {
+      socket.emit("join_admin");
+    });
+
+    // kad flight servis javi novi let
+    socket.on("flight_created", (flight: Flight) => {
+      if (role !== "ADMINISTRATOR") return;
+
+      setFlights(prev => {
+        const exists = prev.some(f => f.id === flight.id);
+        if (exists) return prev;
+
+        return [
+          { ...flight, approvalStatus: "PENDING" },
+          ...prev
+        ];
+      });
+    });
+
+
+    return () => {
+      socket.off("connect");
+      socket.off("flight_created");
+    };
+  }, [role]);
+
 
   const handleBuy = async (f: Flight) => {
     if (!userId) { alert("Please log in."); return; }

@@ -6,6 +6,7 @@ from Auth.Decorators import roles_required
 from Domen.Enums.UserRoles import UserRoles
 from Domen.Config.redis_client import redis_client
 from Domen.Config.config import Config
+from WebSocket.Socket import socketio
 
 gateway_bp = Blueprint("gateway_bp", __name__, url_prefix="/api/gateway")
 
@@ -486,5 +487,21 @@ def cancel_flight(id):
 
     except Exception as error:
         return jsonify({"message": f"Server error: {error}"}), 500
+    
+@gateway_bp.route("/internal/flight-created", methods=["POST"])
+def internal_flight_created():
+    print("🔥 INTERNAL ROUTE HIT 🔥")
+    flight = request.json
+
+    socketio.emit(
+        "flight_created",
+        flight,
+        room="admins"
+    )
+
+    print("📢 flight_created emitted to admins")
+
+    return {"status": "ok"}, 200
+
 
 # endregion

@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("🌍 SERVER_URL ENV:", os.getenv("SERVER_URL"))
+
 class Config:
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
@@ -20,3 +22,4 @@ class Config:
     REDIS_DB = os.getenv("REDIS_DB")
 
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+    SERVER_URL = os.getenv("SERVER_URL")

@@ -8,11 +8,16 @@ from Auth.JWTManager import jwt
 from Routes.AuthRoutes import auth_bp
 from Routes.Gateway import gateway_bp
 from flask_cors import CORS
+from WebSocket.Socket import socketio, register_socket_events
 
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(Config)
 db.init_app(app)
+
+socketio.init_app(app)
+register_socket_events(socketio)
+
 bcrypt.init_app(app)
 jwt.init_app(app)
 app.register_blueprint(user_bp)
@@ -25,4 +30,4 @@ if __name__ == "__main__":
             db.create_all()
             print("Tabele su uspešno kreirane u bazi!")
 
-    app.run(debug=True, port=5001)
+    socketio.run(app, port=5001, debug=True)
