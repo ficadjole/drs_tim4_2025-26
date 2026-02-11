@@ -2,16 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY ./server ./server
-COPY ./flight-service ./flight-service
-COPY ./mailing-service ./mailing-service
+# Kopiraj svaki servis u svoj folder
+COPY server ./server
+COPY flight-service ./flight-service
+COPY mailing-service ./mailing-service
 
+# Instaliraj zavisnosti za svaki servis
 RUN pip install --no-cache-dir poetry
 
-RUN poetry config virtualenvs.create false \
-    && cd server && poetry install --no-dev \
-    && cd flight-service && poetry install --no-dev \
-    && cd mailing-service && poetry install --no-dev
+# instalacija za svaki servis
+RUN cd server && poetry config virtualenvs.create false && poetry install --no-dev
+RUN cd flight-service && poetry config virtualenvs.create false && poetry install --no-dev
+RUN cd mailing-service && poetry config virtualenvs.create false && poetry install --no-dev
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
