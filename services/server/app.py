@@ -11,7 +11,7 @@ from flask_cors import CORS
 from WebSocket.Socket import socketio, register_socket_events
 from flask_socketio import SocketIO
 app = Flask(__name__)
-CORS(app,origins=["https://frontend-service.onrender.com"])
+CORS(app,origins=["https://frontend-latest-zdmy.onrender.com"])
 app.config.from_object(Config)
 db.init_app(app)
 
