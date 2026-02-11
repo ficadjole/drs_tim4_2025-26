@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - "server/**"
-      - "flight-service/**"
-      - "mailing-service/**"
+      - "services/server/**"
+      - "services/flight-service/**"
+      - "services/mailing-service/**"
 
 permissions:
   contents: read
