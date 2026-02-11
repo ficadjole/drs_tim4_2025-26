@@ -117,7 +117,7 @@ def update_user(user_id):
             and old_role == 'USER'
         ):
             requests.post(
-                "http://127.0.0.1:4001/mail/send",
+                "http://mailing-service:4001/mail/send",
                 json={
                     "subject": "Promotion!!!",
                     "to": [updated_user.email],

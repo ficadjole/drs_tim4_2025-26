@@ -20,11 +20,11 @@ def send_email(to,subject,body):
 
 @celery.task(name="email.task.send_ticket_cancelled_email")
 def send_ticket_cancel_email(userId,flightId):
-        user_resp = requests.get(f"http://localhost:5001/api/users/{userId}")
+        user_resp = requests.get(f"http://user-service:5001/api/users/{userId}")
         user_data = user_resp.json()
         recipients = [user_data["email"]]
 
-        flight_resp = requests.get(f"http://localhost:5002/api/flights/getFlight/{flightId}")
+        flight_resp = requests.get(f"http://flight-service:5002/api/flights/getFlight/{flightId}")
         flight_data = flight_resp.json()
 
         params: resend.Emails.SendParams = {
@@ -39,10 +39,10 @@ def send_ticket_cancel_email(userId,flightId):
 
 @celery.task(name="email.task.send_flight_cancelled_email")
 def send_flight_cancelled_email(flightId):
-        ticket_response = requests.get(f"http://127.0.0.1:5002/api/tickets/flights-tickets/{flightId}")
+        ticket_response = requests.get(f"http://flight-service:5002/api/tickets/flights-tickets/{flightId}")
         ticket_data = ticket_response.json()
         for ticket in ticket_data:
-                user_response = requests.get(f"http://127.0.0.1:5001/api/users/{ticket['userId']}",timeout=5)
+                user_response = requests.get(f"http://user-service:5001/api/users/{ticket['userId']}",timeout=5)
 
                 user_data = user_response.json()
 
