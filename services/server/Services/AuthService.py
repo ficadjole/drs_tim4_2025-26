@@ -25,7 +25,7 @@ class AuthService:
             
             db.session.commit()
             raise ValueError("Invalid credentials")
-        
+    
         user.failedAttempts = 0
         user.blockedUntil = None
         db.session.commit()
