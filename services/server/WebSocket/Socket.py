@@ -1,6 +1,5 @@
 from flask_socketio import SocketIO, join_room
 from flask import request
-
 socketio = SocketIO(cors_allowed_origins="*",async_mode="eventlet")
 
 def register_socket_events(socketio):
