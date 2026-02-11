@@ -11,7 +11,6 @@ class AirCompanyService:
         cache_key = f"airCompanies:all"
 
         cached_companies = redis_client.get(cache_key)
-
         if cached_companies:
             return json.loads(cached_companies)
 

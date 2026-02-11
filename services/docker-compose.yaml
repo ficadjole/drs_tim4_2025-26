@@ -6,10 +6,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: flights_db
+      TZ: Europe/Belgrade
     ports:
       - "3307:3306"
     volumes:
       - flights_db_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
 
   user-db:
     image: mysql:8
@@ -18,10 +20,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: users_db
+      TZ: Europe/Belgrade
     ports:
       - "3308:3306"
     volumes:
       - users_db_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
 
   redis_compose:
     image: redis:8.4.0
@@ -40,6 +44,10 @@ services:
       - ./flight-service/.env
     ports:
       - "5002:5002"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      TZ: Europe/Belgrade
 
   user-service:
     build: ./server
@@ -51,6 +59,11 @@ services:
       - ./server/.env
     ports:
       - "5001:5001"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      TZ: Europe/Belgrade
+
 
   mailing-service:
     build: ./mailing-service
@@ -86,6 +99,7 @@ services:
 volumes:
   flights_db_data:
   users_db_data:
+
 
 networks:
   backend_network:

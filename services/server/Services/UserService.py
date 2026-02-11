@@ -10,6 +10,7 @@ class UserService:
     @staticmethod
     def create_user(data):
         #provera da li email vec postoji
+        
         existing_user = Users.query.filter_by(email=data["email"]).first()
         if existing_user:
             raise ValueError("Email already exists")

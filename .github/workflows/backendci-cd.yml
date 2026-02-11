@@ -1,0 +1,47 @@
+name: Build and Push Backend Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/server/**"
+      - "services/flight-service/**"
+      - "services/mailing-service/**"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build User Service
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/user-service:latest ./services/server
+          docker push ghcr.io/${{ github.repository_owner }}/user-service:latest
+
+      - name: Build Flight Service
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/flight-service:latest ./services/flight-service
+          docker push ghcr.io/${{ github.repository_owner }}/flight-service:latest
+
+      - name: Build Mailing Service
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/mailing-service:latest ./services/mailing-service
+          docker push ghcr.io/${{ github.repository_owner }}/mailing-service:latest
+
+      - name: Trigger Render Deploy (placeholder)
+        run: |
+          echo "Ovde možeš dodati Render CLI deploy komandu"

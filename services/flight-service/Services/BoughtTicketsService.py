@@ -11,7 +11,6 @@ from sqlalchemy import func
 class BougthTicketsService:
     @staticmethod
     def get_by_id(id):
-
         cache_key = f"ticket:{id}"
 
         cache_value = redis_client.get(cache_key)

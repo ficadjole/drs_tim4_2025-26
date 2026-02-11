@@ -37,7 +37,6 @@ class AuthService:
                 "email": user.email
             }
         )
-
         return token
     
     @staticmethod
