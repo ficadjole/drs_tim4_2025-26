@@ -32,10 +32,3 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/frontend:latest
-
-      - name: Deploy Frontend on Render
-        run: |
-          curl -fsSL https://cdn.render.com/cli/latest/install.sh | bash
-          $HOME/.render/bin/render deploy service \
-            --service-id ${{ secrets.FRONTEND_SERVICE_ID }} \
-            --api-key ${{ secrets.RENDER_API_KEY }}
