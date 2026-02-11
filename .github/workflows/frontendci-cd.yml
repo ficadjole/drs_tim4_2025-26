@@ -35,5 +35,7 @@ jobs:
 
       - name: Deploy Frontend on Render
         run: |
-          docker run --rm -e RENDER_API_KEY=${{ secrets.RENDER_API_KEY }} renderinc/cli deploy service \
-            --service-id ${{ secrets.FRONTEND_SERVICE_ID }}
+          curl -fsSL https://cdn.render.com/cli/latest/install.sh | bash
+          $HOME/.render/bin/render deploy service \
+            --service-id ${{ secrets.FRONTEND_SERVICE_ID }} \
+            --api-key ${{ secrets.RENDER_API_KEY }}
