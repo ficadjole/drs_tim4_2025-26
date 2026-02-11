@@ -21,6 +21,7 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -fsSL https://cdn.render.com/cli/latest/install.sh | bash
+          export PATH="$HOME/.render/bin:$PATH"
           echo "$HOME/.render/bin" >> $GITHUB_PATH
 
       - name: Log in to GitHub Container Registry
