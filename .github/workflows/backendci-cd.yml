@@ -29,17 +29,17 @@ jobs:
 
       - name: Build User Service
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/user-service:latest ./server
+          docker build -t ghcr.io/${{ github.repository_owner }}/user-service:latest ./services/server
           docker push ghcr.io/${{ github.repository_owner }}/user-service:latest
 
       - name: Build Flight Service
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/flight-service:latest ./flight-service
+          docker build -t ghcr.io/${{ github.repository_owner }}/flight-service:latest ./services/flight-service
           docker push ghcr.io/${{ github.repository_owner }}/flight-service:latest
 
       - name: Build Mailing Service
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/mailing-service:latest ./mailing-service
+          docker build -t ghcr.io/${{ github.repository_owner }}/mailing-service:latest ./services/mailing-service
           docker push ghcr.io/${{ github.repository_owner }}/mailing-service:latest
 
       - name: Trigger Render Deploy (placeholder)
