@@ -18,12 +18,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Render CLI
-        run: |
-          curl -fsSL https://cdn.render.com/cli/latest/install.sh | bash
-          export PATH="$HOME/.render/bin:$PATH"
-          echo "$HOME/.render/bin" >> $GITHUB_PATH
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -41,6 +35,6 @@ jobs:
 
       - name: Deploy Frontend on Render
         run: |
-          render deploy service \
+          npx @render/cli deploy service \
             --service-id ${{ secrets.FRONTEND_SERVICE_ID }} \
             --api-key ${{ secrets.RENDER_API_KEY }}
