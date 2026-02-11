@@ -30,4 +30,4 @@ if __name__ == "__main__":
             db.create_all()
             print("Tabele su uspešno kreirane u bazi!")
 
-    socketio.run(app, port=5001, debug=True)
+    socketio.run(app, port=5001, host="0.0.0.0",allow_unsafe_werkzeug=True)

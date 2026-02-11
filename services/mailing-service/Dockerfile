@@ -8,8 +8,6 @@ RUN pip install --upgrade pip && pip install poetry && poetry install --no-root
 
 COPY . .
 
-EXPOSE 5001
+EXPOSE 4001
 
-CMD ["poetry","run","python","app.py"]
-
-
+CMD ["poetry","run","python","run.py"]

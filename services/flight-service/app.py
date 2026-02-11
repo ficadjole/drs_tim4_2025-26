@@ -22,4 +22,4 @@ if __name__ == "__main__":
             db.create_all()
             print("Uspesno je pokrenut FLIGHT-SERVICE")
 
-    app.run(debug=True, port=5002)
+    app.run(host="0.0.0.0", port=5002)

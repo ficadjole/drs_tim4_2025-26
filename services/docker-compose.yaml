@@ -1,0 +1,92 @@
+services:
+  flight-db:
+    image: mysql:8
+    container_name: flight-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flights_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - flights_db_data:/var/lib/mysql
+
+  user-db:
+    image: mysql:8
+    container_name: user-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: users_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - users_db_data:/var/lib/mysql
+
+  redis_compose:
+    image: redis:8.4.0
+    container_name: redis_compose
+    ports:
+      - "6379:6379"
+    restart: always
+
+  flight-service:
+    build: ./flight-service
+    container_name: flight-service
+    depends_on:
+      - flight-db
+      - redis_compose
+    env_file:
+      - ./flight-service/.env
+    ports:
+      - "5002:5002"
+
+  user-service:
+    build: ./server
+    container_name: user-service
+    depends_on:
+      - user-db
+      - redis_compose
+    env_file:
+      - ./server/.env
+    ports:
+      - "5001:5001"
+
+  mailing-service:
+    build: ./mailing-service
+    container_name: mailing-service
+    depends_on:
+      - redis_compose
+    env_file:
+      - ./mailing-service/.env
+    ports:
+      - "4001:4001"
+
+  mailing-worker:
+    build: ./mailing-service
+    container_name: mailing-worker
+    depends_on:
+      - mailing-service
+      - redis_compose
+    env_file:
+      - ./mailing-service/.env
+    command: poetry run celery -A app.tasks.celery worker --loglevel=info --pool=solo
+
+  frontend:
+    build: ../client
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - user-service
+    env_file:
+      - ../client/.env
+    networks:
+      - backend_network
+volumes:
+  flights_db_data:
+  users_db_data:
+
+networks:
+  backend_network:
+    driver: bridge
