@@ -28,6 +28,7 @@ export default function Navbar() {
           {role === "USER" && <NavLink label="My Tickets" onClick={() => navigate("/my-tickets")} active={location.pathname === "/my-tickets"}/>}
           {role === "ADMINISTRATOR" && <NavLink label="Users" onClick={() => navigate("/users/getAll")} active={location.pathname === "/users/getAll"}/>}
           {role === "ADMINISTRATOR" && <NavLink label="Ratings" onClick={() => navigate("admin/ratings")} active={location.pathname === "/admin/ratings"}/>}
+          {role === "ADMINISTRATOR" && <NavLink label="New Airline" onClick={() => navigate("/create-airline")} active={location.pathname === "/air_company/create"}/>}
         </div>
       </div>
 
