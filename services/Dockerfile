@@ -1,12 +1,20 @@
-FROM docker/compose:2.17.3
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Kopiramo docker-compose i sve servise
-COPY docker-compose.yml .
-COPY services ./services
+COPY ./services/server ./server
+COPY ./services/flight-service ./flight-service
+COPY ./services/mailing-service ./mailing-service
 
-# Build svih servisa
-RUN docker-compose build
+RUN pip install --no-cache-dir poetry
 
-CMD ["docker-compose", "up"]
+RUN poetry config virtualenvs.create false \
+    && cd server && poetry install --no-dev \
+    && cd ../flight-service && poetry install --no-dev \
+    && cd ../mailing-service && poetry install --no-dev
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Startujemo sve servise
+ENTRYPOINT ["/entrypoint.sh"]
