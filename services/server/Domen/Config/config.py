@@ -22,3 +22,4 @@ class Config:
     REDIS_DB = os.getenv("REDIS_DB")
 
     FLIGHT_SERVICE_URL = os.getenv("FLIGHT_SERVICE_URL")
+
