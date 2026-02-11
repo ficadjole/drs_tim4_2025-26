@@ -1,19 +1,18 @@
-name: Build and Push Backend Images
+name: Build and Deploy Backend Package
 
 on:
   push:
     branches: [main]
     paths:
-      - "services/server/**"
-      - "services/flight-service/**"
-      - "services/mailing-service/**"
+      - "services/**"
+      - "docker-compose.yml"
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,21 +26,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build User Service
+      - name: Build Backend Package Image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/user-service:latest ./services/server
-          docker push ghcr.io/${{ github.repository_owner }}/user-service:latest
+          docker build -t ghcr.io/${{ github.repository_owner }}/backend-package:latest ./services
 
-      - name: Build Flight Service
+      - name: Push Backend Package Image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/flight-service:latest ./services/flight-service
-          docker push ghcr.io/${{ github.repository_owner }}/flight-service:latest
+          docker push ghcr.io/${{ github.repository_owner }}/backend-package:latest
 
-      - name: Build Mailing Service
-        run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/mailing-service:latest ./services/mailing-service
-          docker push ghcr.io/${{ github.repository_owner }}/mailing-service:latest
-
-      - name: Trigger Render Deploy (placeholder)
-        run: |
-          echo "Ovde možeš dodati Render CLI deploy komandu"
