@@ -139,6 +139,7 @@ export default function Board({ onClose }: BoardProps) {
 
 function BoardColumn({ title, flights, bgColor, borderColor, isLive }: any) {
   return (
+      
       <div className={`flex flex-col ${bgColor} border ${borderColor} rounded-3xl p-5 min-h-[400px]`}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-white/40 font-black uppercase text-[10px] tracking-[0.2em]">
