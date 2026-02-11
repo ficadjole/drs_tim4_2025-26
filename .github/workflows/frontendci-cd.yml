@@ -18,6 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install Render CLI
+        run: |
+          curl -fsSL https://cdn.render.com/cli/latest/install.sh | bash
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -33,6 +37,8 @@ jobs:
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/frontend:latest
 
-      - name: Trigger Render Deploy
+      - name: Deploy Frontend on Render
         run: |
-          echo "Deploy step placeholder – ovde možeš dodati curl ili Render CLI komandu"
+          render deploy service \
+            --service-id ${{ secrets.FRONTEND_SERVICE_ID }} \
+            --api-key ${{ secrets.RENDER_API_KEY }}
