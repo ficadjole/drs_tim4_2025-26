@@ -117,7 +117,7 @@ def update_user(user_id):
             and old_role == 'USER'
         ):
             requests.post(
-                "http://mailing-service:4001/mail/send",
+                "https://mailing-service-latest.onrender.com:4001/mail/send",
                 json={
                     "subject": "Promotion!!!",
                     "to": [updated_user.email],
