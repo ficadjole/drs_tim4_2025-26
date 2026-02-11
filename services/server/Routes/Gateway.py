@@ -298,7 +298,10 @@ def create_flight():
                 "details": response.text
             }), 500
 
-        redis_client.delete("flights:all") 
+        redis_client.delete("flights:all")
+
+        socketio.emit("flight_created", flight_data)
+
         return jsonify(response.json()), 201
 
     except Exception as error:

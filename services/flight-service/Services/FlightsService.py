@@ -1,5 +1,4 @@
 import json
-
 from Domen.Models.Flights import  Flights
 from Database.InitializationDataBase import db
 from Domen.Config.redis_client import redis_client
@@ -72,15 +71,14 @@ class FlightsService:
         db.session.commit()
 
         flight_data = newFlight.to_dict()
-
-        try:
-            requests.post(
-                f"{Config.SERVER_URL}/api/gateway/internal/flight-created",
-                json=flight_data,
-                timeout=2
-            )
-        except Exception as e:
-            print("Gateway notify failed:", e)
+        # try:
+        #     requests.post(
+        #         f"{Config.SERVER_URL}/api/gateway/internal/flight-created",
+        #         json=flight_data,
+        #         timeout=2
+        #     )
+        # except Exception as e:
+        #     print("Gateway notify failed:", e)
 
         return flight_data
 
