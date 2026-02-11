@@ -12,6 +12,8 @@ services:
     volumes:
       - flights_db_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - backend_network
 
   user-db:
     image: mysql:8
@@ -26,6 +28,8 @@ services:
     volumes:
       - users_db_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - backend_network
 
   redis_compose:
     image: redis:8.4.0
@@ -33,6 +37,8 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    networks:
+      - backend_network
 
   flight-service:
     build: ./flight-service
@@ -48,6 +54,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: Europe/Belgrade
+    networks:
+      - backend_network
 
   user-service:
     build: ./server
@@ -63,7 +71,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: Europe/Belgrade
-
+    networks:
+      - backend_network
 
   mailing-service:
     build: ./mailing-service
@@ -74,6 +83,8 @@ services:
       - ./mailing-service/.env
     ports:
       - "4001:4001"
+    networks:
+      - backend_network
 
   mailing-worker:
     build: ./mailing-service
@@ -84,6 +95,8 @@ services:
     env_file:
       - ./mailing-service/.env
     command: poetry run celery -A app.tasks.celery worker --loglevel=info --pool=solo
+    networks:
+      - backend_network
 
   frontend:
     build: ../client
