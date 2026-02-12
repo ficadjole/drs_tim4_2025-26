@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pytz
 
 class FlightStatusService:
     @staticmethod
@@ -6,8 +7,13 @@ class FlightStatusService:
         if flight.cancelled:
             return "CANCELLED"
 
-        now = datetime.now()
+        belgrade_tz = pytz.timezone("Europe/Belgrade")
+        now = datetime.now(belgrade_tz)
+
         start_time = flight.departureTime
+        if start_time.tzinfo is None:
+            start_time = belgrade_tz.localize(start_time)
+
         end_time = start_time + timedelta(minutes=flight.flightDuration)
 
         if now < start_time:

@@ -117,18 +117,10 @@ def update_user(user_id):
             dto_update.to_dict().get("userRole") == "MANAGER"
             and old_role == 'USER'
         ):
-            # requests.post(
-            #     "https://mailing-service-latest.onrender.com:4001/mail/send",
-            #     json={
-            #         "subject": "Promotion!!!",
-            #         "to": [updated_user.email],
-            #         "body": "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
-            #     },
-            #     timeout=5
-            # )
             subject = "Promotion!!"
             to= updated_user.email
             body= "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
+
             notify_promotion(subject, to, body)
         return jsonify(UserResponseDTO(updated_user).to_dict()), 200
 
