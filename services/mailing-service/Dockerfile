@@ -4,10 +4,13 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 
+COPY start.sh .
+
 RUN pip install --upgrade pip && pip install poetry && poetry install --no-root
 
 COPY . .
 
 EXPOSE 4001
 
-CMD ["poetry","run","python","run.py"]
+RUN chmod +x start.sh
+CMD ["./start.sh"]
