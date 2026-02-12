@@ -20,6 +20,6 @@ class Config:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_DB = os.getenv("REDIS_DB")
-
+    CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
     FLIGHT_SERVICE_URL = os.getenv("FLIGHT_SERVICE_URL")
 
