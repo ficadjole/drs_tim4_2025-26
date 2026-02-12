@@ -80,11 +80,14 @@ def send_report_pdf(admin_email, tab_name, pdf_b64):
 
 
 @celery.task(name="email.task.send_email_promotion")
-def send_email_promotion(to,subject,body):
+def send_email_promotion(subject, to, body):
+
+        print(to)
+
 
         params: resend.Emails.SendParams = {
                 "from": Config.MAIL_USERNAME,
-                "to": to,
+                "to": [to],
                 "subject": subject,
                 "html": f"<p>{body}</p>"
         }

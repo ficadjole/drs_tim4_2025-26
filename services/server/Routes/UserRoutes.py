@@ -127,7 +127,7 @@ def update_user(user_id):
             #     timeout=5
             # )
             subject = "Promotion!!"
-            to= [updated_user.email]
+            to= updated_user.email
             body= "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
             notify_promotion(subject, to, body)
         return jsonify(UserResponseDTO(updated_user).to_dict()), 200
