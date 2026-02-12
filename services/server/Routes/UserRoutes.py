@@ -4,6 +4,7 @@ from Services.UserService import UserService
 from DTO.UserDTO import UserCreateDTO, UserResponseDTO, UserUpdateDTO, UserProfileDTO
 from Domen.Enums.UserRoles import UserRoles
 
+from workers.celery_client import notify_promotion
 
 user_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
@@ -116,15 +117,19 @@ def update_user(user_id):
             dto_update.to_dict().get("userRole") == "MANAGER"
             and old_role == 'USER'
         ):
-            requests.post(
-                "https://mailing-service-latest.onrender.com:4001/mail/send",
-                json={
-                    "subject": "Promotion!!!",
-                    "to": [updated_user.email],
-                    "body": "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
-                }
-            )
-
+            # requests.post(
+            #     "https://mailing-service-latest.onrender.com:4001/mail/send",
+            #     json={
+            #         "subject": "Promotion!!!",
+            #         "to": [updated_user.email],
+            #         "body": "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
+            #     },
+            #     timeout=5
+            # )
+            subject = "Promotion!!"
+            to= [updated_user.email]
+            body= "Hello, " + updated_user.firstName + " " + updated_user.lastName + " you are promoted to Manager!! Congratulations!"
+            notify_promotion(subject, to, body)
         return jsonify(UserResponseDTO(updated_user).to_dict()), 200
 
     except ValueError as e:
