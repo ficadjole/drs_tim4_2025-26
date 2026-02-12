@@ -58,7 +58,12 @@ export default function Board({ onClose }: BoardProps) {
         flightApi.getFlightsByStatus('CANCELLED')
       ]);
 
-      setUpcoming(dataNotStarted);
+      setUpcoming(dataNotStarted.filter(f => f.approvalStatus === "APPROVED"));
+      setLive(dataInProgress.filter(f => f.approvalStatus === "APPROVED"));
+      setArchive([
+        ...dataFinished.filter(f => f.approvalStatus === "APPROVED"),
+        ...dataCancelled
+      ]);
       setLive(dataInProgress);
       setArchive([...dataFinished, ...dataCancelled]);
     } catch (err) {
