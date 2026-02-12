@@ -2,6 +2,8 @@ FROM python:3.14.3-slim
 
 WORKDIR /app
 
+ENV TZ: Europe/Belgrade
+
 COPY pyproject.toml poetry.lock ./
 
 COPY start.sh .
